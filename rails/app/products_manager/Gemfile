@@ -25,7 +25,7 @@ gem 'rails', '4.0.0'
 gem 'jbuilder', '~> 1.2'
 
 # MongoDB
-gem 'mongoid', '~> 6.1.0'
+gem 'mongoid', '~> 4.0.0'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

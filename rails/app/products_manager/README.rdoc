@@ -1,28 +1,16 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
+* Ruby version 2.2.7
+* RoR version 4.0.0
+* MongoDB version 4.0
 
 * Deployment instructions
+  - Run command to start rails image: docker-compose run rails bash
+  - Acess project directory for command: cd /products_manager
+  - Run command to start server: rails s
+
+* Challengers:
+  - First challenge: create application in rails 4.x with mongodb 4.0 in mode API and create service for products 
 
 * ...
 
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.

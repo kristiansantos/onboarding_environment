@@ -6,6 +6,8 @@
 
 ```bash
   $ docker-compose run rails bash  # Run command to start rails image
+  $ docker ps # List containers
+  $ docker exec -it my_container_id bash # Acess bash container
   $ cd /products_manager  # Acess project directory for command: cd /products_manager
   $ rails s  # Run command to start server
 ```

@@ -9,3 +9,7 @@ Ambiente contendo:
 ```bash
 docker-compose run rails bash
 ```
+
+## API
+
+- [Products Manager](./app/products_manager/README.md)

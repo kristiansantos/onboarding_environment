@@ -1,5 +1,5 @@
 ### Ruby version 2.2.7
-### RoR version 4.0.0
+### Rails version 4.0.0
 ### MongoDB version 4.0
 
 ## Deployment instructions

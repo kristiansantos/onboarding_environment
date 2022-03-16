@@ -20,7 +20,7 @@ defmodule ProductsManager.MixProject do
   def application do
     [
       mod: {ProductsManager.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :mongodb_ecto],
     ]
   end
 
@@ -35,8 +35,7 @@ defmodule ProductsManager.MixProject do
     [
       {:phoenix, "~> 1.5.13"},
       {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.4"},
-      {:postgrex, ">= 0.0.0"},
+      {:mongodb_ecto, github: "michalmuskala/mongodb_ecto"},
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},

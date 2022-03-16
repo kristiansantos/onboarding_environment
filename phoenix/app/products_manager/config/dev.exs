@@ -2,9 +2,8 @@ use Mix.Config
 
 # Configure your database
 config :products_manager, ProductsManager.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "products_manager_dev",
+  adapter: Mongo.Ecto,
+  database: "products_manager_development",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

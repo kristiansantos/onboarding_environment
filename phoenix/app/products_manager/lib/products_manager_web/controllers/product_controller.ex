@@ -6,8 +6,8 @@ defmodule ProductsManagerWeb.ProductController do
 
   action_fallback ProductsManagerWeb.FallbackController
 
-  def index(conn, _params) do
-    products = Manager.list_products()
+  def index(conn, params) do
+    products = Manager.list_products(params)
     render(conn, "index.json", products: products)
   end
 

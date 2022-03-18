@@ -1,5 +1,6 @@
 defmodule ProductsManager.Manager.Product do
   use Ecto.Schema
+  use QueryBuilder
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}

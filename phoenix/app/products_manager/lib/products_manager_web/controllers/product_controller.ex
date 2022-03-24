@@ -29,7 +29,7 @@ defmodule ProductsManagerWeb.ProductController do
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
-    product = conn.assigns[:product]
+    {:ok, %Product{} = product} = conn.assigns[:product]
 
     with {:ok, %Product{} = product} <- Manager.update_product(product, product_params) do
       render(conn, "show.json", product: product)
@@ -37,7 +37,7 @@ defmodule ProductsManagerWeb.ProductController do
   end
 
   def delete(conn, %{"id" => id}) do
-    product = conn.assigns[:product]
+    {:ok, %Product{} = product} = conn.assigns[:product]
 
     with {:ok, %Product{}} <- Manager.delete_product(product) do
       send_resp(conn, :no_content, "")

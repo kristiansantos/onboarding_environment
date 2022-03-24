@@ -10,8 +10,6 @@ defmodule ProductsManager.Manager.Product do
     field :name, :string
     field :price, :float
     field :sku, :string
-
-    timestamps()
   end
 
   @doc false

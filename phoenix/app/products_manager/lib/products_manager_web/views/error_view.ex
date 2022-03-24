@@ -1,8 +1,6 @@
 defmodule ProductsManagerWeb.ErrorView do
   use ProductsManagerWeb, :view
 
-  import Ecto.Changeset, only: [traverse_errors: 2]
-
   def render("400.json", _assigns) do
     %{errors: %{detail: "Bad request"}}
   end

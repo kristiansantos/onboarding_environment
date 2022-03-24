@@ -1,5 +1,4 @@
 defmodule ProductsManager.Manager do
-
   import Ecto.Query, warn: false
   use QueryBuilder.Extension
   alias ProductsManager.Repo
@@ -16,7 +15,12 @@ defmodule ProductsManager.Manager do
     |> Repo.all()
   end
 
-  def get_product!(id), do: Repo.get!(Product, id)
+  def get_product(id) do
+    case Repo.get(Product, id) do
+      nil -> {:error, :not_found}
+      product -> {:ok, product}
+    end
+  end
 
   def create_product(attrs \\ %{}) do
     %Product{}
@@ -37,5 +41,4 @@ defmodule ProductsManager.Manager do
   def change_product(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
   end
-
 end

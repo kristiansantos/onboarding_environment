@@ -6,6 +6,8 @@ defmodule ProductsManagerWeb.ProductController do
 
   action_fallback ProductsManagerWeb.FallbackController
 
+  plug :set_product when action in [:show, :update, :delete]
+
   def index(conn, params) do
     products = Manager.list_products(params)
     render(conn, "index.json", products: products)
@@ -21,12 +23,13 @@ defmodule ProductsManagerWeb.ProductController do
   end
 
   def show(conn, %{"id" => id}) do
-    product = Manager.get_product!(id)
-    render(conn, "show.json", product: product)
+    with {:ok, %Product{} = product} <-  conn.assigns[:product] do
+      render(conn, "show.json", product: product)
+    end
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
-    product = Manager.get_product!(id)
+    product = conn.assigns[:product]
 
     with {:ok, %Product{} = product} <- Manager.update_product(product, product_params) do
       render(conn, "show.json", product: product)
@@ -34,10 +37,14 @@ defmodule ProductsManagerWeb.ProductController do
   end
 
   def delete(conn, %{"id" => id}) do
-    product = Manager.get_product!(id)
+    product = conn.assigns[:product]
 
     with {:ok, %Product{}} <- Manager.delete_product(product) do
       send_resp(conn, :no_content, "")
     end
+  end
+
+  defp set_product(conn, _) do
+    assign(conn, :product, Manager.get_product(conn.params["id"]))
   end
 end

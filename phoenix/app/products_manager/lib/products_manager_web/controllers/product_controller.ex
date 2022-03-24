@@ -30,6 +30,8 @@ defmodule ProductsManagerWeb.ProductController do
 
   def update(conn, %{"id" => id, "product" => product_params}) do
     product = conn.assigns[:product]
+    IO.inspect(product_params)
+    IO.inspect(product)
 
     with {:ok, %Product{} = product} <- Manager.update_product(product, product_params) do
       render(conn, "show.json", product: product)

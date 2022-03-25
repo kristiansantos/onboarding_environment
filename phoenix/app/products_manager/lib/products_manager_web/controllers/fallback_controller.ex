@@ -19,14 +19,14 @@ defmodule ProductsManagerWeb.FallbackController do
     conn
     |> put_status(500)
     |> put_view(ProductsManagerWeb.ErrorView)
-    |> render(:"500")
+    |> render("500.json")
   end
 
-  def call(conn, {:error, :bad_request, result}) do
+  def call(conn, {:error, :bad_request}) do
     conn
     |> put_status(400)
     |> put_view(ProductsManagerWeb.ErrorView)
-    |> render(:"400", result: result)
+    |> render("400.json")
   end
 
 end

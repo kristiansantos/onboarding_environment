@@ -23,28 +23,27 @@ defmodule ProductsManagerWeb.ProductController do
   end
 
   def show(conn, %{"id" => id}) do
-    with {:ok, %Product{} = product} <-  conn.assigns[:product] do
-      render(conn, "show.json", product: product)
-    end
+    render(conn, "show.json", product: conn.assigns[:product])
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
-    {:ok, %Product{} = product} = conn.assigns[:product]
-
-    with {:ok, %Product{} = product} <- Manager.update_product(product, product_params) do
+    with {:ok, %Product{} = product} <- Manager.update_product(conn.assigns[:product], product_params) do
       render(conn, "show.json", product: product)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    {:ok, %Product{} = product} = conn.assigns[:product]
-
-    with {:ok, %Product{}} <- Manager.delete_product(product) do
+    with {:ok, %Product{}} <- Manager.delete_product(conn.assigns[:product]) do
       send_resp(conn, :no_content, "")
     end
   end
 
   defp set_product(conn, _) do
-    assign(conn, :product, Manager.get_product(conn.params["id"]))
+    with {:ok, %Product{} = product} <- Manager.get_product(conn.params["id"]) do
+      assign(conn, :product, product)
+    else
+      {:error, :not_found} ->
+        send_resp(conn, :not_found, "Not Found")
+    end
   end
 end

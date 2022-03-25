@@ -43,7 +43,7 @@ defmodule ProductsManagerWeb.ProductController do
       assign(conn, :product, product)
     else
       {:error, :not_found} ->
-        send_resp(conn, :not_found, "Not Found")
+        halt(send_resp(conn, :not_found, "Not Found"))
     end
   end
 end

@@ -37,6 +37,7 @@ defmodule ProductsManager.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:query_builder, "~> 1.0.0"},
       {:mongodb_ecto, github: "michalmuskala/mongodb_ecto"},
+      {:exredis, ">= 0.2.4"},
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},

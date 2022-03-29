@@ -1,8 +1,8 @@
 defmodule ProductsManagerWeb.ProductController do
   use ProductsManagerWeb, :controller
 
-  alias ProductsManager.Manager
-  alias ProductsManager.Manager.Product
+  alias ProductsManager.Contexts.Manager
+  alias ProductsManager.Models.Product
 
   action_fallback ProductsManagerWeb.FallbackController
 

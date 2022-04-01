@@ -1,4 +1,4 @@
-defmodule ProductsManager.Services.RedisService do
+defmodule ProductsManager.Services.Redis do
   def get_by(id, source) do
     case Exredis.Api.get("#{source}:#{id}") do
       :undefined -> {:error, :not_found}

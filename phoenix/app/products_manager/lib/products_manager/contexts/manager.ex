@@ -2,28 +2,43 @@ defmodule ProductsManager.Contexts.Manager do
   import Ecto.Query, warn: false
   use QueryBuilder.Extension
   alias ProductsManager.Repo
-  alias ProductsManager.Services.RedisService
+  alias ProductsManager.Services.Redis
+  alias ProductsManager.Services.Elasticsearch
 
   alias ProductsManager.Models.Product
 
+  @source "product"
+
   def list_products(params) when params == %{} do
-    Repo.all(Product)
+    with {:ok, product} <- Elasticsearch.get_all(@source) do
+      product
+    else
+      _ ->
+        Repo.all(Product)
+    end
   end
 
   def list_products(params) do
-    Product
-    |> QueryBuilder.where(Map.to_list(params))
-    |> Repo.all()
+    params_to_list = Map.to_list(params)
+
+    with {:ok, product} <- Elasticsearch.get_all(params_to_list, @source) do
+      product
+    else
+      _ ->
+        Product
+        |> QueryBuilder.where(params_to_list)
+        |> Repo.all()
+    end
   end
 
   def get_product(id) do
-    with {:ok, product} <- RedisService.get_by(id, "manager-product") do
+    with {:ok, product} <- Redis.get_by(id, @source) do
       {:ok, product}
     else
       _ ->
         case Repo.get(Product, id) do
           nil -> {:error, :not_found}
-          product -> cache_set({:ok, product})
+          product -> services({:ok, product})
         end
     end
   end
@@ -32,18 +47,19 @@ defmodule ProductsManager.Contexts.Manager do
     %Product{}
     |> Product.changeset(attrs)
     |> Repo.insert()
-    |> cache_set()
+    |> services()
   end
 
   def update_product(%Product{} = product, attrs) do
     product
     |> Product.changeset(attrs)
     |> Repo.update()
-    |> cache_set()
+    |> services()
   end
 
   def delete_product(%Product{} = product) do
-    RedisService.delete(product.id, "manager-product")
+    Elasticsearch.delete(product.id, @source)
+    Redis.delete(product.id, @source)
     Repo.delete(product)
   end
 
@@ -51,10 +67,12 @@ defmodule ProductsManager.Contexts.Manager do
     Product.changeset(product, attrs)
   end
 
-  defp cache_set({:error, _}), do: {:error, :bad_request}
+  defp services({:error, _}), do: {:error, :bad_request}
 
-  defp cache_set({:ok, product}) do
-    RedisService.set(product, "manager-product")
+  defp services({:ok, product}) do
+    Elasticsearch.create_or_update(product, @source)
+    Redis.set(product, @source)
     {:ok, product}
   end
+
 end

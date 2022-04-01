@@ -27,7 +27,8 @@ defmodule ProductsManagerWeb.ProductController do
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
-    with {:ok, %Product{} = product} <- Manager.update_product(conn.assigns[:product], product_params) do
+    with {:ok, %Product{} = product} <-
+           Manager.update_product(conn.assigns[:product], product_params) do
       render(conn, "show.json", product: product)
     end
   end

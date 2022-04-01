@@ -4,14 +4,13 @@ defmodule ProductsManager.Contexts.Manager do
   alias ProductsManager.Repo
   alias ProductsManager.Services.Redis
   alias ProductsManager.Services.Elasticsearch
-
   alias ProductsManager.Models.Product
 
   @source "product"
 
   def list_products(params) when params == %{} do
-    with {:ok, product} <- Elasticsearch.get_all(@source) do
-      product
+    with {:ok, products} <- Elasticsearch.get_all(@source) do
+      products
     else
       _ ->
         Repo.all(Product)
@@ -21,8 +20,8 @@ defmodule ProductsManager.Contexts.Manager do
   def list_products(params) do
     params_to_list = Map.to_list(params)
 
-    with {:ok, product} <- Elasticsearch.get_all(params_to_list, @source) do
-      product
+    with {:ok, products} <- Elasticsearch.get_all(params_to_list, @source) do
+      products
     else
       _ ->
         Product
@@ -74,5 +73,4 @@ defmodule ProductsManager.Contexts.Manager do
     Redis.set(product, @source)
     {:ok, product}
   end
-
 end

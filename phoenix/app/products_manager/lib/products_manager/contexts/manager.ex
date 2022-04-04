@@ -1,10 +1,14 @@
 defmodule ProductsManager.Contexts.Manager do
   import Ecto.Query, warn: false
+
   use QueryBuilder.Extension
+
+
+  alias ProductsManager.Models.Product
   alias ProductsManager.Repo
   alias ProductsManager.Services.Redis
   alias ProductsManager.Services.Elasticsearch
-  alias ProductsManager.Models.Product
+
 
   @source "product"
 
@@ -35,7 +39,7 @@ defmodule ProductsManager.Contexts.Manager do
       _ ->
         case Repo.get(Product, id) do
           nil -> {:error, :not_found}
-          product -> services({:ok, product})
+          product -> cached_and_indexed_data({:ok, product})
         end
     end
   end
@@ -44,14 +48,14 @@ defmodule ProductsManager.Contexts.Manager do
     %Product{}
     |> Product.changeset(attrs)
     |> Repo.insert()
-    |> services()
+    |> cached_and_indexed_data()
   end
 
   def update_product(%Product{} = product, attrs) do
     product
     |> Product.changeset(attrs)
     |> Repo.update()
-    |> services()
+    |> cached_and_indexed_data()
   end
 
   def delete_product(%Product{} = product) do
@@ -64,9 +68,9 @@ defmodule ProductsManager.Contexts.Manager do
     Product.changeset(product, attrs)
   end
 
-  defp services({:error, _}), do: {:error, :bad_request}
+  defp cached_and_indexed_data({:error, _}), do: {:error, :bad_request}
 
-  defp services({:ok, product}) do
+  defp cached_and_indexed_data({:ok, product}) do
     Elasticsearch.create_or_update(product, @source)
     Redis.set(product, @source)
     {:ok, product}

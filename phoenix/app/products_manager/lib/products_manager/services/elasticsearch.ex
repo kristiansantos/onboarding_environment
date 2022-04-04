@@ -30,9 +30,7 @@ defmodule ProductsManager.Services.Elasticsearch do
   end
 
   defp convert_query(array_conditions) do
-    array_conditions
-    |> Enum.map(fn {key, value} -> "#{key}:#{value}" end)
-    |> Enum.join("&")
+    Enum.map_join(array_conditions, "&", fn {key, value} -> "#{key}:#{value}" end)
   end
 
   defp response_format(response, source) do

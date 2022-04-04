@@ -9,20 +9,18 @@ defmodule ProductsManager.Contexts.Manager do
   @source "product"
 
   def list_products(params) when params == %{} do
-    with {:ok, products} <- Elasticsearch.get_all(@source) do
-      products
-    else
-      _ ->
-        Repo.all(Product)
+    case Elasticsearch.get_all(@source) do
+      {:ok, products} -> products
+      _ -> Repo.all(Product)
     end
   end
 
   def list_products(params) do
     params_to_list = Map.to_list(params)
 
-    with {:ok, products} <- Elasticsearch.get_all(params_to_list, @source) do
-      products
-    else
+    case Elasticsearch.get_all(params_to_list, @source) do
+      {:ok, products} -> products
+
       _ ->
         Product
         |> QueryBuilder.where(params_to_list)

@@ -1,4 +1,4 @@
-defmodule ProductsManager.Manager.Product do
+defmodule ProductsManager.Models.Product do
   use Ecto.Schema
   use QueryBuilder
   import Ecto.Changeset

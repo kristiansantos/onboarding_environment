@@ -14,7 +14,7 @@ defmodule ProductsManager.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: ProductsManager.PubSub},
       # Start the Endpoint (http/https)
-      ProductsManagerWeb.Endpoint
+      ProductsManagerWeb.Endpoint,
       # Start a worker by calling: ProductsManager.Worker.start_link(arg)
       # {ProductsManager.Worker, arg}
     ]

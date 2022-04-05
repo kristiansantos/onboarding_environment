@@ -1,8 +1,8 @@
 defmodule ProductsManagerWeb.ProductController do
   use ProductsManagerWeb, :controller
 
-  alias ProductsManager.Manager
-  alias ProductsManager.Manager.Product
+  alias ProductsManager.Contexts.Manager
+  alias ProductsManager.Models.Product
 
   action_fallback ProductsManagerWeb.FallbackController
 
@@ -22,12 +22,11 @@ defmodule ProductsManagerWeb.ProductController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    render(conn, "show.json", product: conn.assigns[:product])
-  end
+  def show(conn, %{"id" => id}), do: render(conn, "show.json", product: conn.assigns[:product])
 
   def update(conn, %{"id" => id, "product" => product_params}) do
-    with {:ok, %Product{} = product} <- Manager.update_product(conn.assigns[:product], product_params) do
+    with {:ok, %Product{} = product} <-
+           Manager.update_product(conn.assigns[:product], product_params) do
       render(conn, "show.json", product: product)
     end
   end
@@ -39,11 +38,9 @@ defmodule ProductsManagerWeb.ProductController do
   end
 
   defp set_product(conn, _) do
-    with {:ok, %Product{} = product} <- Manager.get_product(conn.params["id"]) do
-      assign(conn, :product, product)
-    else
-      {:error, :not_found} ->
-        halt(send_resp(conn, :not_found, "Not Found"))
+    case Manager.get_product(conn.params["id"]) do
+      {:ok, %Product{} = product} -> assign(conn, :product, product)
+      {:error, :not_found} -> halt(send_resp(conn, :not_found, "Not Found"))
     end
   end
 end

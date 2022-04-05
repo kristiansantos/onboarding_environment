@@ -18,6 +18,14 @@ config :products_manager, ProductsManagerWeb.Endpoint,
   pubsub_server: ProductsManager.PubSub,
   live_view: [signing_salt: "zGsYlhwB"]
 
+config :exredis,
+  host: "127.0.0.1",
+  port: 6379,
+  password: "",
+  db: 0,
+  reconnect: :no_reconnect,
+  max_queue: :infinity
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

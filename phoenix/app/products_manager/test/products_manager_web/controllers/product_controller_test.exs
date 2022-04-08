@@ -1,22 +1,24 @@
 defmodule ProductsManagerWeb.ProductControllerTest do
   use ProductsManagerWeb.ConnCase
 
-  alias ProductsManager.Manager
-  alias ProductsManager.Manager.Product
+  alias ProductsManager.Contexts.Manager
+  alias ProductsManager.Models.Product
 
   @create_attrs %{
     amount: 42,
     description: "some description",
     name: "some name",
-    price: 120.5,
-    sku: "some sku"
+    price: 120,
+    sku: "ABC-DEFG-HJK",
+    barcode: "A124BR66"
   }
   @update_attrs %{
     amount: 43,
     description: "some updated description",
     name: "some updated name",
     price: 456.7,
-    sku: "some updated sku"
+    sku: "ABC-DEFG-FFF",
+    barcode: "UP77BR56"
   }
   @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
 
@@ -45,17 +47,18 @@ defmodule ProductsManagerWeb.ProductControllerTest do
 
       assert %{
                "id" => id,
-               "amount" => 42,
-               "description" => "some description",
-               "name" => "some name",
-               "price" => 120.5,
-               "sku" => "some sku"
-             } = json_response(conn, 200)["data"]
+               "amount" => @create_attrs.amount,
+               "description" => @create_attrs.description,
+               "name" => @create_attrs.name,
+               "price" => @create_attrs.price,
+               "sku" => @create_attrs.sku,
+               "barcode" => @create_attrs.barcode
+             } == json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.product_path(conn, :create), product: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
+      assert json_response(conn, 400)["errors"] != %{}
     end
   end
 
@@ -70,17 +73,18 @@ defmodule ProductsManagerWeb.ProductControllerTest do
 
       assert %{
                "id" => id,
-               "amount" => 43,
-               "description" => "some updated description",
-               "name" => "some updated name",
-               "price" => 456.7,
-               "sku" => "some updated sku"
-             } = json_response(conn, 200)["data"]
+               "amount" => @update_attrs.amount,
+               "description" => @update_attrs.description,
+               "name" => @update_attrs.name,
+               "price" => @update_attrs.price,
+               "sku" => @update_attrs.sku,
+               "barcode" => @update_attrs.barcode
+             } == json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, product: product} do
       conn = put(conn, Routes.product_path(conn, :update, product), product: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
+      assert json_response(conn, 400)["errors"] != %{}
     end
   end
 
@@ -91,9 +95,8 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       conn = delete(conn, Routes.product_path(conn, :delete, product))
       assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.product_path(conn, :show, product))
-      end
+      get_conn = get(conn, Routes.product_path(conn, :show, product))
+      assert response(get_conn, 404)
     end
   end
 

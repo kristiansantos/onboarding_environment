@@ -2,7 +2,6 @@ use Mix.Config
 
 # Configure your database
 config :products_manager, ProductsManager.Repo,
-  adapter: Mongo.Ecto,
   database: "products_manager_development",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
@@ -33,4 +32,4 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :tirexs, :uri, "http://127.0.0.1:9200"
 
-config :elasticsearch, :index, "/products_manager/"
+config :elasticsearch, :index, "/products_manager"

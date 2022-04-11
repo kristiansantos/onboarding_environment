@@ -22,11 +22,6 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   }
   @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
 
-  def fixture(:product) do
-    {:ok, product} = Manager.create_product(@create_attrs)
-    product
-  end
-
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
@@ -63,7 +58,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   end
 
   describe "update product" do
-    setup [:create_product]
+    setup [:fixture_product]
 
     test "renders product when data is valid", %{conn: conn, product: %Product{id: id} = product} do
       conn = put(conn, Routes.product_path(conn, :update, product), product: @update_attrs)
@@ -89,7 +84,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   end
 
   describe "delete product" do
-    setup [:create_product]
+    setup [:fixture_product]
 
     test "deletes chosen product", %{conn: conn, product: product} do
       conn = delete(conn, Routes.product_path(conn, :delete, product))
@@ -100,8 +95,8 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  defp create_product(_) do
-    product = fixture(:product)
+  defp fixture_product(_) do
+    {:ok, product} = Manager.create_product(@create_attrs)
     %{product: product}
   end
 end

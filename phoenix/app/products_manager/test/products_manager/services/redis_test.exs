@@ -24,18 +24,14 @@ defmodule ProductsManager.RedisTest do
   @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
   @source "redis_test"
 
-  def data_fixture() do
-    Redis.set(@valid_attrs, @source)
-  end
-
   describe "get_by" do
-    test "get_by/1 with valid id" do
-      data_fixture()
+    setup [:data_fixture]
+
+    test "get_by/1 with valid id", data do
       assert {:ok, @valid_attrs} = Redis.get_by(@valid_attrs.id, @source)
     end
 
-    test "get_by/1 with invalid id" do
-      data_fixture()
+    test "get_by/1 with invalid id", data do
       assert {:error, :not_found} = Redis.get_by("050505", @source)
     end
   end
@@ -51,20 +47,22 @@ defmodule ProductsManager.RedisTest do
   end
 
   describe "delete" do
+    setup [:data_fixture]
+
     test "delete/1 with valid id" do
-      data_fixture()
       assert 1 = Redis.delete(@valid_attrs.id, @source)
     end
 
     test "delete/1 with invalid id" do
-      data = data_fixture()
-
       assert 0 = Redis.delete("01020305", @source)
     end
 
     test "delete_all/1" do
-      data_fixture()
       assert :ok = Redis.delete_all()
     end
+  end
+
+  defp data_fixture(_) do
+    Redis.set(@valid_attrs, @source)
   end
 end

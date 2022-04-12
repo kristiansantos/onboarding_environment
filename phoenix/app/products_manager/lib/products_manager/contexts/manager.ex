@@ -68,7 +68,7 @@ defmodule ProductsManager.Contexts.Manager do
     Product.changeset(product, attrs)
   end
 
-  defp cached_and_indexed_data({:error, _}), do: {:error, :bad_request}
+  defp cached_and_indexed_data({:error, _changeset} = error), do: error
 
   defp cached_and_indexed_data({:ok, product}) do
     Elasticsearch.create_or_update(product, @source)

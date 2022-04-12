@@ -53,7 +53,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
 
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.product_path(conn, :create), product: @invalid_attrs)
-      assert json_response(conn, 400)["errors"] != %{}
+      assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
@@ -79,7 +79,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
 
     test "renders errors when data is invalid", %{conn: conn, product: product} do
       conn = put(conn, Routes.product_path(conn, :update, product), product: @invalid_attrs)
-      assert json_response(conn, 400)["errors"] != %{}
+      assert json_response(conn, 422)["errors"] != %{}
     end
   end
 

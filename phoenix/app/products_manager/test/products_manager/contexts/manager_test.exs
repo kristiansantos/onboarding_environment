@@ -85,7 +85,8 @@ defmodule ProductsManager.Contexts.ManagerTest do
     end
 
     test "create_product/1 with invalid data returns error changeset" do
-      assert {:error, :bad_request} = Manager.create_product(@invalid_attrs)
+      {:error, response} = Manager.create_product(@invalid_attrs)
+      assert %Ecto.Changeset{valid?: false} = response
     end
   end
 
@@ -103,7 +104,8 @@ defmodule ProductsManager.Contexts.ManagerTest do
     end
 
     test "update_product/2 with invalid data returns error changeset", %{product: product} do
-      assert {:error, :bad_request} = Manager.update_product(product, @invalid_attrs)
+      {:error, response} = Manager.update_product(product, @invalid_attrs)
+      assert %Ecto.Changeset{valid?: false} = response
 
       {:ok, get_product} = Manager.get_product(product.id)
       assert product == get_product

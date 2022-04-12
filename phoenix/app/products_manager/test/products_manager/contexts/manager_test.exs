@@ -20,6 +20,8 @@ defmodule ProductsManager.Contexts.ManagerTest do
     sku: "ABC-DEFG-FFF",
     barcode: "UP77BR56"
   }
+  @search_attrs %{sku: "ABC-DEFG-HJK", barcode: "A124BR66"}
+  @search_attrs_not_match %{sku: "ABC-DEFG-AAAA", barcode: "A124B7R66"}
   @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
 
   describe "List products" do
@@ -38,6 +40,24 @@ defmodule ProductsManager.Contexts.ManagerTest do
                }
              ]
     end
+
+    test "list_products/1 returns search products", %{product: product} do
+      assert Manager.list_products(@search_attrs) == [
+               %{
+                 id: product.id,
+                 amount: product.amount,
+                 description: product.description,
+                 name: product.name,
+                 price: product.price,
+                 sku: product.sku,
+                 barcode: product.barcode
+               }
+             ]
+    end
+
+    test "list_products/1 returns search products not match" do
+      assert Manager.list_products(@search_attrs_not_match) == []
+    end
   end
 
   describe "Get product" do
@@ -46,6 +66,10 @@ defmodule ProductsManager.Contexts.ManagerTest do
     test "get_product/1 returns the product with given id", %{product: product} do
       {:ok, get_product} = Manager.get_product(product.id)
       assert get_product == product
+    end
+
+    test "get_product/1 returns not found", %{product: product} do
+      assert {:error, :not_found} = Manager.get_product("722a744bdf29eb0151000000")
     end
   end
 

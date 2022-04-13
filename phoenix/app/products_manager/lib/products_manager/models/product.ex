@@ -10,7 +10,7 @@ defmodule ProductsManager.Models.Product do
     field :name, :string
     field :price, :float
     field :sku, :string
-    field(:barcode, :string)
+    field :barcode, :string
   end
 
   @doc false

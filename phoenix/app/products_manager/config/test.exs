@@ -12,4 +12,7 @@ config :logger, level: :warn
 
 config :tirexs, :uri, "http://127.0.0.1:9200"
 
+config :elasticsearch, :service, ElasticsearchBehaviourMock
 config :elasticsearch, :index, "/products_manager_test"
+
+config :redis, :service, RedisBehaviourMock

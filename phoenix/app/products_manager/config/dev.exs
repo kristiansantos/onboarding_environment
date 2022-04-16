@@ -32,4 +32,7 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :tirexs, :uri, "http://127.0.0.1:9200"
 
+config :elasticsearch, service: ProductsManager.Services.Elasticsearch
 config :elasticsearch, :index, "/products_manager"
+
+config :redis, service: ProductsManager.Services.Redis

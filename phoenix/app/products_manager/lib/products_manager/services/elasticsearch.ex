@@ -1,4 +1,5 @@
 defmodule ProductsManager.Services.Elasticsearch do
+  @behaviour ProductsManager.Services.ElasticsearchBehaviour
   import Tirexs.HTTP
 
   def get_all(source) do

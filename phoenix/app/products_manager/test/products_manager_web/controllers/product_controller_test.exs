@@ -41,7 +41,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
 
   describe "create product" do
     test "renders product when data is valid", %{conn: conn} do
-      create_mock(@create_attrs)
+      create_update_mock(@create_attrs)
       conn = post(conn, Routes.product_path(conn, :create), product: @create_attrs)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -49,7 +49,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      create_mock(@invalid_attrs)
+      create_update_mock(@invalid_attrs)
       conn = post(conn, Routes.product_path(conn, :create), product: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
@@ -59,7 +59,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     setup [:fixture_product]
 
     test "renders product when data is valid", %{conn: conn, product: %Product{id: id} = product} do
-      create_mock(@create_attrs)
+      create_update_mock(@create_attrs)
       redis_get_by_mock(product)
 
       conn = put(conn, Routes.product_path(conn, :update, product), product: @update_attrs)
@@ -69,7 +69,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, product: product} do
-      create_mock(@create_attrs)
+      create_update_mock(@create_attrs)
       redis_get_by_mock(product)
 
       conn = put(conn, Routes.product_path(conn, :update, product), product: @invalid_attrs)
@@ -94,13 +94,13 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   end
 
   defp fixture_product(_) do
-    create_mock(@create_attrs)
+    create_update_mock(@create_attrs)
     {:ok, product} = Manager.create_product(@create_attrs)
 
     %{product: product}
   end
 
-  defp create_mock(data) do
+  defp create_update_mock(data) do
     elasticsearch_create_update_mock(data)
     redis_set_mock(data)
   end

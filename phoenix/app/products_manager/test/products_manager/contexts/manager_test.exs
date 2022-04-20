@@ -68,7 +68,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
 
   describe "Create products" do
     test "create_product/1 with valid data creates a product" do
-      create_mock(@valid_attrs)
+      create_update_mock(@valid_attrs)
 
       assert {:ok, %Product{} = product} = Manager.create_product(@valid_attrs)
       assert product.amount == @valid_attrs.amount
@@ -80,7 +80,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
     end
 
     test "create_product/1 with invalid data returns error changeset" do
-      create_mock(@invalid_attrs)
+      create_update_mock(@invalid_attrs)
 
       {:error, response} = Manager.create_product(@invalid_attrs)
       assert %Ecto.Changeset{valid?: false} = response
@@ -91,7 +91,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
     setup [:product_fixture]
 
     test "update_product/2 with valid data updates the product", %{product: product} do
-      create_mock(@update_attrs)
+      create_update_mock(@update_attrs)
 
       assert {:ok, %Product{} = product} = Manager.update_product(product, @update_attrs)
       assert product.amount == @update_attrs.amount
@@ -103,7 +103,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
     end
 
     test "update_product/2 with invalid data returns error changeset", %{product: product} do
-      create_mock(@invalid_attrss)
+      create_update_mock(@invalid_attrss)
       redis_get_by_mock(product.id)
 
       {:error, response} = Manager.update_product(product, @invalid_attrs)
@@ -126,13 +126,13 @@ defmodule ProductsManager.Contexts.ManagerTest do
   end
 
   defp product_fixture(_) do
-    create_mock(@valid_attrs)
+    create_update_mock(@valid_attrs)
     {:ok, product} = Manager.create_product(@valid_attrs)
 
     %{product: product}
   end
 
-  defp create_mock(data) do
+  defp create_update_mock(data) do
     elasticsearch_create_update_mock(data)
     redis_set_mock(data)
   end

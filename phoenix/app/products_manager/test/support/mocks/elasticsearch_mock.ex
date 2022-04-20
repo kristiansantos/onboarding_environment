@@ -1,0 +1,33 @@
+defmodule ProductsManager.ElasticsearchMock do
+  use ExUnit.CaseTemplate
+
+  using do
+    quote do
+      import Hammox
+
+      defp elasticsearch_list_mock(data \\ [], params, source) do
+        if params == %{} do
+          expect(ElasticsearchBehaviourMock, :get_all, fn source ->
+            {:ok, data}
+          end)
+        else
+          expect(ElasticsearchBehaviourMock, :get_all, fn _, source ->
+            {:ok, data}
+          end)
+        end
+      end
+
+      defp elasticsearch_create_update_mock(data \\ @valid_attrs) do
+        expect(ElasticsearchBehaviourMock, :create_or_update, fn _, _ ->
+          {:ok, 200, data}
+        end)
+      end
+
+      defp elasticsearch_delete_mock(id, source) do
+        expect(ElasticsearchBehaviourMock, :delete, fn id, source ->
+          {:ok, 200, id}
+        end)
+      end
+    end
+  end
+end

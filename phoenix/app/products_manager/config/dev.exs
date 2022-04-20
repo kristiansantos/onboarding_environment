@@ -20,6 +20,14 @@ config :products_manager, ProductsManagerWeb.Endpoint,
   check_origin: false,
   watchers: []
 
+config :exredis,
+  host: "127.0.0.1",
+  port: 6379,
+  password: "",
+  db: 0,
+  reconnect: :no_reconnect,
+  max_queue: :infinity
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 
@@ -32,4 +40,7 @@ config :phoenix, :plug_init_mode, :runtime
 
 config :tirexs, :uri, "http://127.0.0.1:9200"
 
+config :elasticsearch, service: ProductsManager.Services.Elasticsearch
 config :elasticsearch, :index, "/products_manager"
+
+config :redis, service: ProductsManager.Services.Redis

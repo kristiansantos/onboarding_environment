@@ -27,47 +27,75 @@ defmodule ProductsManager.Contexts.ManagerTest do
   @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
   @source "product"
 
-  describe "List products" do
+  describe "list_products/0" do
     setup [:product_fixture]
 
-    test "list_products/0 returns all products", %{product: product} do
+    test "With success returns all products in elasticsearch", %{product: product} do
       elasticsearch_list_mock([product], %{}, @source)
 
       assert Manager.list_products(%{}) == [product]
     end
 
-    test "list_products/1 returns search products", %{product: product} do
+    test "With success returns all products in database", %{product: product} do
+      elasticsearch_list_mock(:error, %{}, @source)
+
+      assert Manager.list_products(%{}) == [product]
+    end
+  end
+
+  describe "list_products/1" do
+    setup [:product_fixture]
+
+    test "With success returns search products in elasticsearch", %{product: product} do
       elasticsearch_list_mock([product], @search_attrs, @source)
 
       assert Manager.list_products(@search_attrs) == [product]
     end
 
-    test "list_products/1 returns search products not match" do
+    test "With success list_products/1 returns search products not match in elasticsearch" do
       elasticsearch_list_mock(@search_attrs_not_match, @source)
+
+      assert Manager.list_products(@search_attrs_not_match) == []
+    end
+
+    test "With success returns search products in database", %{product: product} do
+      elasticsearch_list_mock(:error, @search_attrs, @source)
+
+      assert Manager.list_products(@search_attrs) == [product]
+    end
+
+    test "With success list_products/1 returns search products not match in database" do
+      elasticsearch_list_mock(:error, @search_attrs, @source)
 
       assert Manager.list_products(@search_attrs_not_match) == []
     end
   end
 
-  describe "Get product" do
+  describe "get_product/1" do
     setup [:product_fixture]
 
-    test "get_product/1 returns the product with given id", %{product: product} do
+    test "With success returns the product with the given id in redis", %{product: product} do
       redis_get_by_mock(product)
       {:ok, get_product} = Manager.get_product(product.id)
 
       assert get_product == product
     end
 
-    test "get_product/1 returns not found", %{product: product} do
+    test "With error returns the product with the given id in database", %{product: product} do
+      redis_get_by_mock({:error, :not_found})
+
+      {:error, :not_found} = Manager.get_product("722a744bdf29eb0151000000")
+    end
+
+    test "With error returns not found", %{product: product} do
       redis_get_by_mock({:error, :not_found})
 
       assert {:error, :not_found} = Manager.get_product("722a744bdf29eb0151000000")
     end
   end
 
-  describe "Create products" do
-    test "create_product/1 with valid data creates a product" do
+  describe "create_product/1" do
+    test "With sucess valid data creates a product" do
       create_update_mock(@valid_attrs)
 
       assert {:ok, %Product{} = product} = Manager.create_product(@valid_attrs)
@@ -79,7 +107,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
       assert product.barcode == @valid_attrs.barcode
     end
 
-    test "create_product/1 with invalid data returns error changeset" do
+    test "With invalid data returns error changeset" do
       create_update_mock(@invalid_attrs)
 
       {:error, response} = Manager.create_product(@invalid_attrs)
@@ -87,10 +115,10 @@ defmodule ProductsManager.Contexts.ManagerTest do
     end
   end
 
-  describe "Update product" do
+  describe "update_product/1" do
     setup [:product_fixture]
 
-    test "update_product/2 with valid data updates the product", %{product: product} do
+    test "With success valid data updates the product", %{product: product} do
       create_update_mock(@update_attrs)
 
       assert {:ok, %Product{} = product} = Manager.update_product(product, @update_attrs)
@@ -102,7 +130,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
       assert product.barcode == @update_attrs.barcode
     end
 
-    test "update_product/2 with invalid data returns error changeset", %{product: product} do
+    test "With error invalid data returns error changeset", %{product: product} do
       create_update_mock(@invalid_attrss)
       redis_get_by_mock(product.id)
 
@@ -114,12 +142,12 @@ defmodule ProductsManager.Contexts.ManagerTest do
     end
   end
 
-  describe "Delete product" do
+  describe "delete_product/1" do
     setup [:product_fixture]
 
-    test "delete_product/1 deletes the product", %{product: product} do
-      elasticsearch_delete_mock(product.id, @source)
-      redis_delete_mock(product.id, @source)
+    test "With success deletes the product", %{product: product} do
+      elasticsearch_delete_mock(@source, product.id)
+      redis_delete_mock(@source, product.id)
 
       assert {:ok, %Product{}} = Manager.delete_product(product)
     end

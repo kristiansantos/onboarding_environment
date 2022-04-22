@@ -1,7 +1,42 @@
 defmodule ProductsManager.Services.Behaviours.RedisBehaviour do
-  @callback get_by(any, any) :: {:error, :not_found} | {:ok, any}
-  @callback set(atom | %{:id => any, optional(any) => any}, any) ::
-              :no_connection | :ok | :undefined | binary | [binary | [...]]
-  @callback delete(any, any) :: any
-  @callback delete_all :: :no_connection | :ok | :undefined | binary | [binary | [...]]
+  @callback get_by(any, any) ::
+              {:ok, any}
+              | {:error,
+                 atom
+                 | %{
+                     :__exception__ => any,
+                     :__struct__ => Redix.ConnectionError | Redix.Error,
+                     optional(:message) => binary,
+                     optional(:reason) => atom
+                   }}
+  @callback set(any, any) ::
+              :ok
+              | {:error,
+                 atom
+                 | %{
+                     :__exception__ => any,
+                     :__struct__ => Redix.ConnectionError | Redix.Error,
+                     optional(:message) => binary,
+                     optional(:reason) => atom
+                   }}
+  @callback delete(any, any) ::
+              :ok
+              | {:error,
+                 atom
+                 | %{
+                     :__exception__ => any,
+                     :__struct__ => Redix.ConnectionError | Redix.Error,
+                     optional(:message) => binary,
+                     optional(:reason) => atom
+                   }}
+  @callback delete_all ::
+              :ok
+              | {:error,
+                 atom
+                 | %{
+                     :__exception__ => any,
+                     :__struct__ => Redix.ConnectionError | Redix.Error,
+                     optional(:message) => binary,
+                     optional(:reason) => atom
+                   }}
 end

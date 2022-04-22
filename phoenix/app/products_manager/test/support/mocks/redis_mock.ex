@@ -19,9 +19,7 @@ defmodule ProductsManager.RedisMock do
 
       defp redis_set_mock(data) do
         expect(RedisBehaviourMock, :set, fn _, _ ->
-          data
-          |> :erlang.term_to_binary()
-          |> Base.encode16()
+          :ok
         end)
       end
 

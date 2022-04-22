@@ -39,7 +39,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  describe "create product" do
+  describe "create" do
     test "renders product when data is valid", %{conn: conn} do
       create_update_mock(@create_attrs)
       conn = post(conn, Routes.product_path(conn, :create), product: @create_attrs)
@@ -55,7 +55,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  describe "update product" do
+  describe "update" do
     setup [:fixture_product]
 
     test "renders product when data is valid", %{conn: conn, product: %Product{id: id} = product} do
@@ -78,7 +78,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  describe "delete product" do
+  describe "delete" do
     setup [:fixture_product]
 
     test "deletes chosen product", %{conn: conn, product: product} do

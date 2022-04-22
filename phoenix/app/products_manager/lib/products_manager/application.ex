@@ -9,6 +9,7 @@ defmodule ProductsManager.Application do
     children = [
       # Start the Ecto repository
       ProductsManager.Repo,
+      ProductsManager.RedisConnetion,
       # Start the Telemetry supervisor
       ProductsManagerWeb.Telemetry,
       # Start the PubSub system

@@ -22,7 +22,7 @@ defmodule ProductsManager.Contexts.Manager do
   def list_products(params) do
     params_to_list = Map.to_list(params)
 
-    case @elasticsearch_service.get_all(params_to_list, @source) do
+    case @elasticsearch_service.get_all(@source, params_to_list) do
       {:ok, products} -> products
 
       _ ->
@@ -33,7 +33,7 @@ defmodule ProductsManager.Contexts.Manager do
   end
 
   def get_product(id) do
-    with {:ok, product} <- @redis_service.get_by(id, @source) do
+    with {:ok, product} <- @redis_service.get_by(@source, id) do
       {:ok, product}
     else
       _ ->
@@ -59,8 +59,8 @@ defmodule ProductsManager.Contexts.Manager do
   end
 
   def delete_product(%Product{} = product) do
-    @elasticsearch_service.delete(product.id, @source)
-    @redis_service.delete(product.id, @source)
+    @elasticsearch_service.delete(@source, product.id)
+    @redis_service.delete(@source, product.id)
     Repo.delete(product)
   end
 
@@ -71,8 +71,8 @@ defmodule ProductsManager.Contexts.Manager do
   defp cached_and_indexed_data({:error, _changeset} = error), do: error
 
   defp cached_and_indexed_data({:ok, product}) do
-    @elasticsearch_service.create_or_update(product, @source)
-    @redis_service.set(product, @source)
+    @elasticsearch_service.create_or_update(@source, product)
+    @redis_service.set(@source, product)
     {:ok, product}
   end
 end

@@ -10,18 +10,18 @@ defmodule ProductsManager.Services.Elasticsearch do
     end
   end
 
-  def get_all(array_conditions, source) do
+  def get_all(source, array_conditions) do
     with {:ok, 200, response_body} <-
            get("#{path()}/#{source}/_search?q=#{convert_query(array_conditions)}") do
       {:ok, response_format(response_body[:hits][:hits], source)}
     end
   end
 
-  def create_or_update(data, source) do
+  def create_or_update(source, data) do
     put("#{path()}/#{source}/#{data.id}", convert_data(data))
   end
 
-  def delete(id, source) do
+  def delete(source, id) do
     delete("#{path()}/#{source}/#{id}")
   end
 

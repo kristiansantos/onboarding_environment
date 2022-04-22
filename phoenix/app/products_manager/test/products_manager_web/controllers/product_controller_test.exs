@@ -55,6 +55,28 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
+  describe "show" do
+    setup [:fixture_product]
+
+    test "renders product when id is valid", %{conn: conn, product: product} do
+      redis_get_by_mock(product)
+
+      conn = get(conn, Routes.product_path(conn, :show, product))
+
+      assert response(conn, 200)
+    end
+
+    test "renders errors when id not found", %{conn: conn, product: product} do
+      redis_get_by_mock({:error, :not_found})
+
+      product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
+      conn = get(conn, Routes.product_path(conn, :show, product_not_found))
+
+      assert conn.resp_body == "Not Found"
+      assert response(conn, 404)
+    end
+  end
+
   describe "update" do
     setup [:fixture_product]
 
@@ -66,6 +88,17 @@ defmodule ProductsManagerWeb.ProductControllerTest do
 
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
       assert Repo.get(Product, id) != nil
+    end
+
+    test "renders errors when data is not found", %{conn: conn, product: product} do
+      create_update_mock(product)
+      redis_get_by_mock({:error, :not_found})
+
+      product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
+      conn = put(conn, Routes.product_path(conn, :update, product_not_found), product: @update_attrs)
+
+      assert conn.resp_body == "Not Found"
+      assert response(conn, 404)
     end
 
     test "renders errors when data is invalid", %{conn: conn, product: product} do
@@ -90,6 +123,18 @@ defmodule ProductsManagerWeb.ProductControllerTest do
 
       assert response(conn, 204)
       assert Repo.get(Product, product.id) == nil
+    end
+
+    test "deletes chosen product not found", %{conn: conn, product: product} do
+      redis_get_by_mock({:error, :not_found})
+      elasticsearch_delete_mock(product.id, @source)
+      redis_delete_mock(product.id, @source)
+
+      product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
+      conn = delete(conn, Routes.product_path(conn, :delete, product_not_found))
+
+      assert conn.resp_body == "Not Found"
+      assert response(conn, 404)
     end
   end
 

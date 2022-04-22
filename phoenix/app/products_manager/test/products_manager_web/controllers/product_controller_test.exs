@@ -31,11 +31,31 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   end
 
   describe "index" do
-    test "lists all products", %{conn: conn} do
+    setup [:fixture_product]
+
+    test "lists all products without data", %{conn: conn} do
       elasticsearch_list_mock(%{}, @source)
 
       conn = get(conn, Routes.product_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
+    end
+
+    test "lists all products with data", %{conn: conn, product: product} do
+      elasticsearch_list_mock([product], %{}, @source)
+
+      conn = get(conn, Routes.product_path(conn, :index))
+
+      assert json_response(conn, 200)["data"] == [
+               %{
+                 "id" => product.id,
+                 "amount" => product.amount,
+                 "description" => product.description,
+                 "name" => product.name,
+                 "price" => product.price,
+                 "sku" => product.sku,
+                 "barcode" => product.barcode
+               }
+             ]
     end
   end
 
@@ -95,7 +115,9 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       redis_get_by_mock({:error, :not_found})
 
       product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
-      conn = put(conn, Routes.product_path(conn, :update, product_not_found), product: @update_attrs)
+
+      conn =
+        put(conn, Routes.product_path(conn, :update, product_not_found), product: @update_attrs)
 
       assert conn.resp_body == "Not Found"
       assert response(conn, 404)

@@ -3,6 +3,10 @@ defmodule ProductsManager.ElasticsearchMock do
 
   use ExUnit.CaseTemplate
 
+  setup_all do
+    Hammox.protect(ProductsManager.Services.Elasticsearch, ElasticsearchBehaviourMock)
+  end
+
   using do
     quote do
       defp elasticsearch_list_mock(:no_search, status, data \\ [], source) do

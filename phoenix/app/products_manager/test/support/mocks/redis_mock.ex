@@ -1,6 +1,10 @@
 defmodule ProductsManager.RedisMock do
   use ExUnit.CaseTemplate
 
+  setup_all do
+    Hammox.protect(ProductsManager.Services.Redis, RedisBehaviourMock)
+  end
+
   using do
     quote do
       import Hammox

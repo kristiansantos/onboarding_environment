@@ -31,13 +31,13 @@ defmodule ProductsManager.Contexts.ManagerTest do
     setup [:product_fixture]
 
     test "With success returns all products in elasticsearch", %{product: product} do
-      elasticsearch_list_mock([product], %{}, @source)
+      elasticsearch_list_mock(:no_search, :ok, [product], @source)
 
       assert Manager.list_products(%{}) == [product]
     end
 
     test "With success returns all products in database", %{product: product} do
-      elasticsearch_list_mock(:error, %{}, @source)
+      elasticsearch_list_mock(:no_search, :error, @source)
 
       assert Manager.list_products(%{}) == [product]
     end
@@ -47,25 +47,25 @@ defmodule ProductsManager.Contexts.ManagerTest do
     setup [:product_fixture]
 
     test "With success returns search products in elasticsearch", %{product: product} do
-      elasticsearch_list_mock([product], @search_attrs, @source)
+      elasticsearch_list_mock(:search, :ok, [product], @source)
 
       assert Manager.list_products(@search_attrs) == [product]
     end
 
     test "With success list_products/1 returns search products not match in elasticsearch" do
-      elasticsearch_list_mock(@search_attrs_not_match, @source)
+      elasticsearch_list_mock(:search, :ok, @source)
 
       assert Manager.list_products(@search_attrs_not_match) == []
     end
 
     test "With success returns search products in database", %{product: product} do
-      elasticsearch_list_mock(:error, @search_attrs, @source)
+      elasticsearch_list_mock(:search, :error, @source)
 
       assert Manager.list_products(@search_attrs) == [product]
     end
 
     test "With success list_products/1 returns search products not match in database" do
-      elasticsearch_list_mock(:error, @search_attrs, @source)
+      elasticsearch_list_mock(:search, :error, @source)
 
       assert Manager.list_products(@search_attrs_not_match) == []
     end

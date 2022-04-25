@@ -5,28 +5,18 @@ defmodule ProductsManager.ElasticsearchMock do
 
   using do
     quote do
-      defp elasticsearch_list_mock(:error, params, source) do
-        if params == %{} do
-          expect(ElasticsearchBehaviourMock, :get_all, fn source ->
-            :error
-          end)
-        else
-          expect(ElasticsearchBehaviourMock, :get_all, fn source, _ ->
-            :error
-          end)
-        end
+      defp elasticsearch_list_mock(:no_search, status, data \\ [], source) do
+        expect(ElasticsearchBehaviourMock, :get_all, fn
+          source when status == :error -> :error
+          source when status == :ok -> {:ok, data}
+        end)
       end
 
-      defp elasticsearch_list_mock(data \\ [], params, source) do
-        if params == %{} do
-          expect(ElasticsearchBehaviourMock, :get_all, fn source ->
-            {:ok, data}
-          end)
-        else
-          expect(ElasticsearchBehaviourMock, :get_all, fn source, _ ->
-            {:ok, data}
-          end)
-        end
+      defp elasticsearch_list_mock(:search, status, data, source) do
+        expect(ElasticsearchBehaviourMock, :get_all, fn
+          source, _ when status == :error -> :error
+          source, _ when status == :ok -> {:ok, data}
+        end)
       end
 
       defp elasticsearch_create_update_mock(data \\ @valid_attrs) do

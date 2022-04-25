@@ -34,14 +34,14 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     setup [:fixture_product]
 
     test "lists all products without data", %{conn: conn} do
-      elasticsearch_list_mock(%{}, @source)
+      elasticsearch_list_mock(:no_search, :ok, @source)
 
       conn = get(conn, Routes.product_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
     end
 
     test "lists all products with data", %{conn: conn, product: product} do
-      elasticsearch_list_mock([product], %{}, @source)
+      elasticsearch_list_mock(:no_search, :ok, [product], @source)
 
       conn = get(conn, Routes.product_path(conn, :index))
 

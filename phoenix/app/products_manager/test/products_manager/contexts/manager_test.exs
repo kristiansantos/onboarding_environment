@@ -76,15 +76,15 @@ defmodule ProductsManager.Contexts.ManagerTest do
 
     test "With success returns the product with the given id in redis", %{product: product} do
       redis_get_by_mock(product)
-      {:ok, get_product} = Manager.get_product(product.id)
 
-      assert get_product == product
+      assert {:ok, get_product} = Manager.get_product(product.id)
     end
 
     test "With error returns the product with the given id in database", %{product: product} do
+      create_update_mock(@valid_attrs)
       redis_get_by_mock({:error, :not_found})
 
-      {:error, :not_found} = Manager.get_product("722a744bdf29eb0151000000")
+      assert Manager.get_product(product.id) == {:ok, product}
     end
 
     test "With error returns not found", %{product: product} do
@@ -108,8 +108,6 @@ defmodule ProductsManager.Contexts.ManagerTest do
     end
 
     test "With invalid data returns error changeset" do
-      create_update_mock(@invalid_attrs)
-
       {:error, response} = Manager.create_product(@invalid_attrs)
       assert %Ecto.Changeset{valid?: false} = response
     end
@@ -137,8 +135,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
       {:error, response} = Manager.update_product(product, @invalid_attrs)
       assert %Ecto.Changeset{valid?: false} = response
 
-      {:ok, get_product} = Manager.get_product(product.id)
-      assert product = get_product
+      assert {:ok, product} = Manager.get_product(product.id)
     end
   end
 

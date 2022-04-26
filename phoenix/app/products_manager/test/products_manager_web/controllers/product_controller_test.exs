@@ -33,7 +33,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   describe "index" do
     setup [:fixture_product]
 
-    test "lists all products without data", %{conn: conn} do
+    test "lists all products returns empty data", %{conn: conn} do
       elasticsearch_list_mock(:no_search, :ok, @source)
 
       conn = get(conn, Routes.product_path(conn, :index))

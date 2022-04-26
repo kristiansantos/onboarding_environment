@@ -1,7 +1,6 @@
 defmodule ProductsManager.Services.Redis do
-  @conn :redis_connection
-
   @behaviour ProductsManager.Services.Behaviours.RedisBehaviour
+  @conn :redis_connection
   def get_by(source, id) do
     case Redix.command(@conn, ["GET", "#{source}:#{id}"]) do
       {:error, error} -> {:error, error}

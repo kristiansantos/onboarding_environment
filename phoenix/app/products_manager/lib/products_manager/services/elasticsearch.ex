@@ -1,5 +1,4 @@
 defmodule ProductsManager.Services.Elasticsearch do
-
   @behaviour ProductsManager.Services.Behaviours.ElasticsearchBehaviour
 
   import Tirexs.HTTP

@@ -130,11 +130,11 @@ defmodule ProductsManager.Contexts.ManagerTest do
 
     test "With error invalid data returns error changeset", %{product: product} do
       create_update_mock(@invalid_attrss)
+      redis_get_by_mock({:error, :not_found})
 
       {:error, response} = Manager.update_product(product, @invalid_attrs)
       assert %Ecto.Changeset{valid?: false} = response
 
-      redis_get_by_mock({:error, :not_found})
       assert {:ok, product} == Manager.get_product(product.id)
     end
   end

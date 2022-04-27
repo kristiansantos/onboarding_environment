@@ -1,9 +1,11 @@
 defmodule ProductsManager.Services.Behaviours.ElasticsearchBehaviour do
-  @callback get_all(any) :: :error | {:ok, list} | {:error, number, any} | {:ok, any}
-  @callback get_all(any, list()) ::
-              :error | {:ok, list} | {:error, number, any} | {:ok, any}
-  @callback create_or_update(any, %{:id => any, optional(any) => any}) ::
-              :error | {:error, number, any} | {:ok, number, any}
-  @callback delete(any, any) :: :error | {:error, number, String.t()} | {:ok, number, any}
-  @callback delete_all :: :error | {:error, number, String.t()} | {:ok, number, any}
+  @type method_result :: {:ok, list} | {:ok, any} | {:ok, number, any}
+  @type handle_error :: :error | {:error, number, any}
+
+  @callback get_all(String.t()) :: method_result | handle_error
+  @callback get_all(String.t(), list()) :: method_result | handle_error
+  @callback create_or_update(String.t(), %{:id => any, optional(any) => any}) ::
+              method_result | handle_error
+  @callback delete(String.t(), String.t()) :: method_result | handle_error
+  @callback delete_all :: method_result | handle_error
 end

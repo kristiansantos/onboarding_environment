@@ -3,11 +3,11 @@ defmodule ProductsManager.Contexts.Manager do
 
   use QueryBuilder.Extension
 
-
   alias ProductsManager.Models.Product
   alias ProductsManager.Repo
   alias ProductsManager.Services.Elasticsearch
   alias ProductsManager.Services.Redis
+
   @source "product"
 
   def list_products(params) when params == %{} do
@@ -21,7 +21,8 @@ defmodule ProductsManager.Contexts.Manager do
     params_to_list = Map.to_list(params)
 
     case Elasticsearch.get_all(@source, params_to_list) do
-      {:ok, products} -> products
+      {:ok, products} ->
+        products
 
       _ ->
         Product
@@ -69,8 +70,23 @@ defmodule ProductsManager.Contexts.Manager do
   defp cached_and_indexed_data({:error, _changeset} = error), do: error
 
   defp cached_and_indexed_data({:ok, product}) do
-    Elasticsearch.create_or_update(@source, product)
+    Elasticsearch.create_or_update(@source, get_product_attrs(product))
     Redis.set(@source, product)
+
     {:ok, product}
+  end
+
+  defp get_product_attrs(product) do
+    %{
+      amount: product.amount,
+      barcode: product.barcode,
+      description: product.description,
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      sku: product.sku,
+      created_at: DateTime.to_iso8601(product.created_at),
+      updated_at: DateTime.to_iso8601(product.updated_at)
+    }
   end
 end

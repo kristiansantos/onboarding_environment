@@ -11,6 +11,8 @@ defmodule ProductsManager.Models.Product do
     field :price, :float
     field :sku, :string
     field :barcode, :string
+
+    timestamps(inserted_at: :created_at, type: :utc_datetime)
   end
 
   @doc false

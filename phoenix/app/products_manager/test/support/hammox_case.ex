@@ -1,2 +1,2 @@
-Hammox.defmock(ElasticsearchBehaviourMock, for: ProductsManager.Services.Behaviours.ElasticsearchBehaviour)
-Hammox.defmock(RedisBehaviourMock, for: ProductsManager.Services.Behaviours.RedisBehaviour)
+Hammox.defmock(TirexsHttpBehaviourMock, for: ProductsManager.Services.Behaviours.TirexsHttpBehaviour)
+Hammox.defmock(RedixBehaviourMock, for: ProductsManager.Services.Behaviours.RedixBehaviour)

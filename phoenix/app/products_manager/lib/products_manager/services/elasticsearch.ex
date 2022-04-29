@@ -1,31 +1,29 @@
 defmodule ProductsManager.Services.Elasticsearch do
-  @behaviour ProductsManager.Services.Behaviours.ElasticsearchBehaviour
-
-  import Tirexs.HTTP
+  @tirexs_http Application.get_env(:tirexs, :service)
 
   def get_all(source) do
-    with {:ok, 200, response_body} <- get("#{path()}/#{source}/_search") do
+    with {:ok, 200, response_body} <- @tirexs_http.get("#{path()}/#{source}/_search") do
       {:ok, response_format(response_body[:hits][:hits], source)}
     end
   end
 
   def get_all(source, array_conditions) do
     with {:ok, 200, response_body} <-
-           get("#{path()}/#{source}/_search?q=#{convert_query(array_conditions)}") do
+           @tirexs_http.get("#{path()}/#{source}/_search?q=#{convert_query(array_conditions)}") do
       {:ok, response_format(response_body[:hits][:hits], source)}
     end
   end
 
   def create_or_update(source, data) do
-    put("#{path()}/#{source}/#{data.id}", convert_data(data))
+    @tirexs_http.put("#{path()}/#{source}/#{data.id}", convert_data(data))
   end
 
   def delete(source, id) do
-    delete("#{path()}/#{source}/#{id}")
+    @tirexs_http.delete("#{path()}/#{source}/#{id}")
   end
 
   def delete_all() do
-    delete("#{path()}")
+    @tirexs_http.delete("#{path()}")
   end
 
   defp convert_data(data) do

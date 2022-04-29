@@ -15,5 +15,5 @@ config :tirexs, :uri, "http://127.0.0.1:9200"
 config :elasticsearch, :index, "/products_manager_test"
 
 # Hammox mocks
-config :elasticsearch, :service, ElasticsearchBehaviourMock
-config :redis, :service, RedisBehaviourMock
+config :tirexs, service: TirexsHttpBehaviourMock
+config :redix, service: RedixBehaviourMock

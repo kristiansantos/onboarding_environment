@@ -15,9 +15,6 @@ defmodule ProductsManagerWeb.ConnCase do
 
   setup do
     Mongo.Ecto.truncate(ProductsManager.Repo)
-    ProductsManager.Services.Elasticsearch.delete_all()
-    ProductsManager.Services.Redis.delete_all()
-
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

@@ -14,9 +14,6 @@ defmodule ProductsManager.DataCase do
 
   setup do
     Mongo.Ecto.truncate(ProductsManager.Repo)
-    ProductsManager.Services.Elasticsearch.delete_all()
-    ProductsManager.Services.Redis.delete_all()
-
     :ok
   end
 

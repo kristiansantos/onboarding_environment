@@ -1,7 +1,7 @@
 defmodule ProductsManagerWeb.ProductControllerTest do
   use ProductsManagerWeb.ConnCase
-  use ProductsManager.ElasticsearchMock
-  use ProductsManager.RedisMock
+  use ProductsManager.TirexsHttpMock
+  use ProductsManager.RedixMock
 
   alias ProductsManager.Contexts.Manager
   alias ProductsManager.Models.Product
@@ -26,22 +26,24 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
   @source "product"
 
+  setup :verify_on_exit!
+
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "index" do
-    setup [:fixture_product]
+    setup [:product_fixture]
 
     test "lists all products returns empty data", %{conn: conn} do
-      elasticsearch_list_mock(:no_search, :ok, @source)
+      tirexs_mock_get(:ok, [])
 
       conn = get(conn, Routes.product_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
     end
 
     test "lists all products with data", %{conn: conn, product: product} do
-      elasticsearch_list_mock(:no_search, :ok, [product], @source)
+      tirexs_mock_get(:ok, product)
 
       conn = get(conn, Routes.product_path(conn, :index))
 
@@ -61,7 +63,8 @@ defmodule ProductsManagerWeb.ProductControllerTest do
 
   describe "create" do
     test "renders product when data is valid", %{conn: conn} do
-      create_update_mock(@create_attrs)
+      cached_and_indexed_data_mock(@create_attrs)
+
       conn = post(conn, Routes.product_path(conn, :create), product: @create_attrs)
 
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -69,17 +72,16 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      create_update_mock(@invalid_attrs)
       conn = post(conn, Routes.product_path(conn, :create), product: @invalid_attrs)
       assert json_response(conn, 422)["errors"] == %{"name" => ["can't be blank"]}
     end
   end
 
   describe "show" do
-    setup [:fixture_product]
+    setup [:product_fixture]
 
     test "renders product when id is valid", %{conn: conn, product: product} do
-      redis_get_by_mock(product)
+      redix_mock_command(:ok, "GET", product)
 
       conn = get(conn, Routes.product_path(conn, :show, product))
 
@@ -87,7 +89,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
 
     test "renders errors when id not found", %{conn: conn, product: product} do
-      redis_get_by_mock({:error, :not_found})
+      redix_mock_command(:error, "GET", nil)
 
       product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
       conn = get(conn, Routes.product_path(conn, :show, product_not_found))
@@ -98,11 +100,11 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   end
 
   describe "update" do
-    setup [:fixture_product]
+    setup [:product_fixture]
 
     test "renders product when data is valid", %{conn: conn, product: %Product{id: id} = product} do
-      create_update_mock(@create_attrs)
-      redis_get_by_mock(product)
+      cached_and_indexed_data_mock(product)
+      redix_mock_command(:ok, "GET", product)
 
       conn = put(conn, Routes.product_path(conn, :update, product), product: @update_attrs)
 
@@ -111,8 +113,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
 
     test "renders errors when data is not found", %{conn: conn, product: product} do
-      create_update_mock(product)
-      redis_get_by_mock({:error, :not_found})
+      redix_mock_command(:error, "GET", nil)
 
       product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
 
@@ -124,8 +125,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, product: product} do
-      create_update_mock(@create_attrs)
-      redis_get_by_mock(product)
+      redix_mock_command(:ok, "GET", product)
 
       conn = put(conn, Routes.product_path(conn, :update, product), product: @invalid_attrs)
 
@@ -134,12 +134,12 @@ defmodule ProductsManagerWeb.ProductControllerTest do
   end
 
   describe "delete" do
-    setup [:fixture_product]
+    setup [:product_fixture]
 
     test "deletes chosen product", %{conn: conn, product: product} do
-      redis_get_by_mock(product)
-      elasticsearch_delete_mock(product.id, @source)
-      redis_delete_mock(product.id, @source)
+      redix_mock_command(:ok, "GET", product)
+      redix_mock_command(:ok, "DEL", product)
+      tirexs_mock_delete()
 
       conn = delete(conn, Routes.product_path(conn, :delete, product))
 
@@ -148,9 +148,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
 
     test "deletes chosen product not found", %{conn: conn, product: product} do
-      redis_get_by_mock({:error, :not_found})
-      elasticsearch_delete_mock(product.id, @source)
-      redis_delete_mock(product.id, @source)
+      redix_mock_command(:error, "GET", nil)
 
       product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
       conn = delete(conn, Routes.product_path(conn, :delete, product_not_found))
@@ -160,15 +158,16 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  defp fixture_product(_) do
-    create_update_mock(@create_attrs)
+  defp product_fixture(_) do
+    cached_and_indexed_data_mock(@create_attrs)
+
     {:ok, product} = Manager.create_product(@create_attrs)
 
     %{product: product}
   end
 
-  defp create_update_mock(data) do
-    elasticsearch_create_update_mock(data)
-    redis_set_mock(data)
+  defp cached_and_indexed_data_mock(data) do
+    tirexs_mock_put()
+    redix_mock_command(:ok, "SET", data)
   end
 end

@@ -22,9 +22,17 @@ defmodule ProductsManager.Contexts.ManagerTest do
     sku: "ABC-DEFG-FFF",
     barcode: "UP77BR56"
   }
+  @invalid_attrs %{
+    amount: nil,
+    description: nil,
+    name: nil,
+    price: nil,
+    sku: nil,
+    created_at: nil,
+    updated_at: nil
+  }
   @search_attrs %{sku: "ABC-DEFG-HJK", barcode: "A124BR66"}
   @search_attrs_not_match %{sku: "ABC-DEFG-AAAA", barcode: "A124B7R66"}
-  @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
   @source "product"
 
   setup :verify_on_exit!
@@ -54,7 +62,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
       assert Manager.list_products(@search_attrs) == [product]
     end
 
-    test "With success list_products/1 returns search products not match in elasticsearch"do
+    test "With success list_products/1 returns search products not match in elasticsearch" do
       tirexs_mock_get(:ok, [])
 
       assert Manager.list_products(@search_attrs_not_match) == []

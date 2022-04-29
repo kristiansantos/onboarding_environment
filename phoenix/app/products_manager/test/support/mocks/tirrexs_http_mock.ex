@@ -17,7 +17,7 @@ defmodule ProductsManager.TirexsHttpMock do
 
       defp tirexs_mock_put(attemps \\ 1) do
         expect(TirexsHttpBehaviourMock, :put, attemps, fn _, _ ->
-          {:ok, 200, %{}}
+          {:ok, 201, %{}}
         end)
       end
 

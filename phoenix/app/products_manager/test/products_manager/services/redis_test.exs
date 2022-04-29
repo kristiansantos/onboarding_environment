@@ -11,7 +11,9 @@ defmodule ProductsManager.RedisTest do
     name: "name_test",
     price: 120.5,
     sku: "ABC-DEFG-HJK",
-    barcode: "A124BR66"
+    barcode: "A124BR66",
+    created_at: DateTime.to_iso8601(DateTime.utc_now()),
+    updated_at: DateTime.to_iso8601(DateTime.utc_now())
   }
   @update_attrs %{
     id: Enum.random(0..255),
@@ -20,9 +22,19 @@ defmodule ProductsManager.RedisTest do
     name: "some_updated_name",
     price: 456.7,
     sku: "ABC-DEFG-FFF",
-    barcode: "UP77BR56"
+    barcode: "UP77BR56",
+    created_at: DateTime.to_iso8601(DateTime.utc_now()),
+    updated_at: DateTime.to_iso8601(DateTime.utc_now())
   }
-  @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
+  @invalid_attrs %{
+    amount: nil,
+    description: nil,
+    name: nil,
+    price: nil,
+    sku: nil,
+    created_at: nil,
+    updated_at: nil
+  }
   @source "redis_test"
 
   describe "get_by" do

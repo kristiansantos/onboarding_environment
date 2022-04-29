@@ -3,24 +3,18 @@ defmodule ProductsManager.RedixMock do
 
   @connection :redix_test
 
-  setup_all do
-    Hammox.protect(Redix, RedixBehaviourMock)
-  end
-
   using do
     quote do
       import Hammox
 
       defp redix_mock_command(status, command, data, attemps \\ 1) do
         expect(RedixBehaviourMock, :command, attemps, fn
-          _, _ when status == :ok -> {:ok, data}
-          _, _ when status == :error -> {:ok, nil}
-        end)
-      end
-
-      defp redix_mock_command(status, command, data, attemps, opts) do
-        expect(RedixBehaviourMock, :command, attemps, fn _, _, _ ->
-          {:ok, data}
+          _, _ when command == "SET" and status == :ok -> {:ok, data}
+          _, _ when command == "SET" and status == :error -> {:error, "error_description"}
+          _, _ when command == "GET" and status == :ok -> {:ok, data}
+          _, _ when command == "GET" and status == :error -> {:ok, nil}
+          _, _ when command == "DEL" and status == :ok -> {:ok, data}
+          _, _ when command == "DEL" and status == :error -> {:error, "error_description"}
         end)
       end
     end

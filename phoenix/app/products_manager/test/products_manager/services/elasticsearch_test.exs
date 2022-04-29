@@ -37,6 +37,8 @@ defmodule ProductsManager.ElasticSearchTest do
   }
   @source "product"
 
+  setup :verify_on_exit!
+
   describe "get_all" do
     setup [:data_fixture]
 

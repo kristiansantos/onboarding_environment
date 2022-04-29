@@ -37,6 +37,8 @@ defmodule ProductsManager.RedisTest do
   }
   @source "redis_test"
 
+  setup :verify_on_exit!
+
   describe "get_by" do
     setup [:data_fixture]
 

@@ -10,7 +10,7 @@ defmodule ProductsManager.Contexts.Manager do
 
   @source "product"
 
-  def list_products(params) when params == %{} do
+  def list_products(params \\ %{}) when params == %{} do
     case Elasticsearch.get_all(@source) do
       {:ok, products} -> products
       _ -> Repo.all(Product)

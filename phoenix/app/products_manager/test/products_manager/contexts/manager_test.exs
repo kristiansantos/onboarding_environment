@@ -43,13 +43,13 @@ defmodule ProductsManager.Contexts.ManagerTest do
     test "With success returns all products in elasticsearch", %{product: product} do
       tirexs_mock_get(:ok, product)
 
-      assert Manager.list_products(%{}) == [product]
+      assert Manager.list_products() == [product]
     end
 
     test "With success returns all products in database", %{product: product} do
       tirexs_mock_get(:error, product)
 
-      assert Manager.list_products(%{}) == [product]
+      assert Manager.list_products() == [product]
     end
   end
 

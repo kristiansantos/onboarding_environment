@@ -15,17 +15,6 @@ defmodule ProductsManager.RedisTest do
     created_at: DateTime.to_iso8601(DateTime.utc_now()),
     updated_at: DateTime.to_iso8601(DateTime.utc_now())
   }
-  @update_attrs %{
-    id: Enum.random(0..255),
-    amount: 43,
-    description: "some updated description",
-    name: "some_updated_name",
-    price: 456.7,
-    sku: "ABC-DEFG-FFF",
-    barcode: "UP77BR56",
-    created_at: DateTime.to_iso8601(DateTime.utc_now()),
-    updated_at: DateTime.to_iso8601(DateTime.utc_now())
-  }
   @invalid_attrs %{
     amount: nil,
     description: nil,
@@ -40,14 +29,12 @@ defmodule ProductsManager.RedisTest do
   setup :verify_on_exit!
 
   describe "get_by" do
-    setup [:data_fixture]
-
     test "get_by/1 with valid id" do
       redix_mock_command(:ok, "GET", @valid_attrs)
       assert {:ok, @valid_attrs} == Redis.get_by(@source, @valid_attrs.id)
     end
 
-    test "get_by/1 with invalid id", data do
+    test "get_by/1 with invalid id" do
       redix_mock_command(:error, "GET", nil)
 
       assert {:error, :not_found} == Redis.get_by(@source, "050505")
@@ -66,8 +53,6 @@ defmodule ProductsManager.RedisTest do
   end
 
   describe "delete" do
-    setup [:data_fixture]
-
     test "delete/1 with valid id" do
       redix_mock_command(:ok, "DEL", @valid_attrs.id)
       assert :ok == Redis.delete(@source, @valid_attrs.id)
@@ -84,9 +69,4 @@ defmodule ProductsManager.RedisTest do
     end
   end
 
-  defp data_fixture(_) do
-    redix_mock_command(:ok, "SET", @valid_attrs)
-
-    Redis.set(@source, @valid_attrs)
-  end
 end

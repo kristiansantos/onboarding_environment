@@ -1,4 +1,4 @@
-defmodule ProductsManager.ProductTest do
+defmodule ProductsManager.Models.ProductTest do
   use ProductsManager.DataCase
 
   alias ProductsManager.Models.Product

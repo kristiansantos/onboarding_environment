@@ -33,7 +33,6 @@ defmodule ProductsManager.Contexts.ManagerTest do
   }
   @search_attrs %{sku: "ABC-DEFG-HJK", barcode: "A124BR66"}
   @search_attrs_not_match %{sku: "ABC-DEFG-AAAA", barcode: "A124B7R66"}
-  @source "product"
 
   setup :verify_on_exit!
 
@@ -97,7 +96,7 @@ defmodule ProductsManager.Contexts.ManagerTest do
       assert {:ok, ^product} = Manager.get_product(product.id)
     end
 
-    test "With error returns not found", %{product: product} do
+    test "With error returns not found" do
       redix_mock_command(:error, "GET", nil)
 
       assert {:error, :not_found} = Manager.get_product("722a744bdf29eb0151000000")

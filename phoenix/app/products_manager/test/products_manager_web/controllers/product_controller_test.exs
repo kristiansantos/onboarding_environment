@@ -24,7 +24,6 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     barcode: "UP77BR56"
   }
   @invalid_attrs %{amount: nil, description: nil, name: nil, price: nil, sku: nil}
-  @source "product"
 
   setup :verify_on_exit!
 
@@ -38,16 +37,23 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     test "lists all products returns empty data", %{conn: conn} do
       tirexs_mock_get(:ok, [])
 
-      conn = get(conn, Routes.product_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
+      response =
+        conn
+        |> get(Routes.product_path(conn, :index))
+        |> json_response(200)
+
+      assert response["data"] == []
     end
 
     test "lists all products with data", %{conn: conn, product: product} do
       tirexs_mock_get(:ok, product)
 
-      conn = get(conn, Routes.product_path(conn, :index))
+      response =
+        conn
+        |> get(Routes.product_path(conn, :index))
+        |> json_response(200)
 
-      assert json_response(conn, 200)["data"] == [
+      assert response["data"] == [
                %{
                  "id" => product.id,
                  "amount" => product.amount,
@@ -65,15 +71,22 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     test "renders product when data is valid", %{conn: conn} do
       cached_and_indexed_data_mock(@create_attrs)
 
-      conn = post(conn, Routes.product_path(conn, :create), product: @create_attrs)
+      response =
+        conn
+        |> post(Routes.product_path(conn, :create), product: @create_attrs)
+        |> json_response(201)
 
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      assert %{"id" => id} = response["data"]
       assert Repo.get(Product, id) != nil
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.product_path(conn, :create), product: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] == %{"name" => ["can't be blank"]}
+      response =
+        conn
+        |> post(Routes.product_path(conn, :create), product: @invalid_attrs)
+        |> json_response(422)
+
+      assert response["errors"] == %{"name" => ["can't be blank"]}
     end
   end
 
@@ -91,7 +104,8 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     test "renders errors when id not found", %{conn: conn, product: product} do
       redix_mock_command(:error, "GET", nil)
 
-      product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
+      product_not_found = %{product | id: "722a744bdf29eb0151000000"}
+
       conn = get(conn, Routes.product_path(conn, :show, product_not_found))
 
       assert conn.resp_body == "Not Found"
@@ -106,16 +120,19 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       cached_and_indexed_data_mock(product)
       redix_mock_command(:ok, "GET", product)
 
-      conn = put(conn, Routes.product_path(conn, :update, product), product: @update_attrs)
+      response =
+        conn
+        |> put(Routes.product_path(conn, :update, product), product: @update_attrs)
+        |> json_response(200)
 
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+      assert %{"id" => ^id} = response["data"]
       assert Repo.get(Product, id) != nil
     end
 
     test "renders errors when data is not found", %{conn: conn, product: product} do
       redix_mock_command(:error, "GET", nil)
 
-      product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
+      product_not_found = %{product | id: "722a744bdf29eb0151000000"}
 
       conn =
         put(conn, Routes.product_path(conn, :update, product_not_found), product: @update_attrs)
@@ -127,9 +144,12 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     test "renders errors when data is invalid", %{conn: conn, product: product} do
       redix_mock_command(:ok, "GET", product)
 
-      conn = put(conn, Routes.product_path(conn, :update, product), product: @invalid_attrs)
+      response =
+        conn
+        |> put(Routes.product_path(conn, :update, product), product: @invalid_attrs)
+        |> json_response(422)
 
-      assert json_response(conn, 422)["errors"] == %{"name" => ["can't be blank"]}
+      assert response["errors"] == %{"name" => ["can't be blank"]}
     end
   end
 
@@ -150,7 +170,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     test "deletes chosen product not found", %{conn: conn, product: product} do
       redix_mock_command(:error, "GET", nil)
 
-      product_not_found = Map.replace(product, :id, "722a744bdf29eb0151000000")
+      product_not_found = %{product | id: "722a744bdf29eb0151000000"}
       conn = delete(conn, Routes.product_path(conn, :delete, product_not_found))
 
       assert conn.resp_body == "Not Found"

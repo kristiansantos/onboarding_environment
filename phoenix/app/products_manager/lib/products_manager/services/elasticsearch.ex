@@ -7,7 +7,7 @@ defmodule ProductsManager.Services.Elasticsearch do
     do:
       handle_response(
         source,
-        @tirexs_http.get("#{path()}/#{source}/_search?q=#{convert_query(search_list)}")
+        @tirexs_http.get("#{path()}/#{source}/_search?q=#{to_query(search_list)}")
       )
 
   def create_or_update(source, data),
@@ -16,7 +16,7 @@ defmodule ProductsManager.Services.Elasticsearch do
   def delete(source, id), do: @tirexs_http.delete("#{path()}/#{source}/#{id}")
   def delete_all(), do: @tirexs_http.delete("#{path()}")
 
-  defp convert_query(search_list) do
+  defp to_query(search_list) do
     search_list
     |> Enum.map_join("&", fn {key, value} -> "#{key}:#{value}" end)
     |> URI.encode()
@@ -26,14 +26,8 @@ defmodule ProductsManager.Services.Elasticsearch do
 
   defp handle_response(source, {:error, _http_code, _body} = error), do: error
 
-  defp handle_response(source, {:ok, _, response}) do
-    data =
-      response[:hits][:hits]
-      |> Enum.filter(fn key -> key[:_type] == source end)
-      |> Enum.map(& &1[:_source])
-
-    {:ok, data}
-  end
+  defp handle_response(source, {:ok, _, response}),
+    do: {:ok, Enum.map(response[:hits][:hits], & &1[:_source])}
 
   defp path() do
     Application.get_env(:elasticsearch, :index)

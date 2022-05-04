@@ -31,10 +31,10 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
-  describe "index" do
+  describe "index/2" do
     setup [:product_fixture]
 
-    test "lists all products returns empty data", %{conn: conn} do
+    test "Lists all products returns empty data", %{conn: conn} do
       tirexs_mock_get(:ok, [])
 
       response =
@@ -45,7 +45,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       assert response["data"] == []
     end
 
-    test "lists all products with data", %{conn: conn, product: product} do
+    test "Lists all products with data", %{conn: conn, product: product} do
       tirexs_mock_get(:ok, product)
 
       response =
@@ -67,8 +67,8 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  describe "create" do
-    test "renders product when data is valid", %{conn: conn} do
+  describe "create/2" do
+    test "Renders product when data is valid", %{conn: conn} do
       cached_and_indexed_data_mock(@create_attrs)
 
       response =
@@ -80,7 +80,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       assert Repo.get(Product, id) != nil
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
+    test "Renders errors when data is invalid", %{conn: conn} do
       response =
         conn
         |> post(Routes.product_path(conn, :create), product: @invalid_attrs)
@@ -90,10 +90,10 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  describe "show" do
+  describe "show/2" do
     setup [:product_fixture]
 
-    test "renders product when id is valid", %{conn: conn, product: product} do
+    test "Renders product when id is valid", %{conn: conn, product: product} do
       redix_mock_command(:ok, "GET", product)
 
       conn = get(conn, Routes.product_path(conn, :show, product))
@@ -101,7 +101,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       assert response(conn, 200)
     end
 
-    test "renders errors when id not found", %{conn: conn, product: product} do
+    test "Renders errors when id not found", %{conn: conn, product: product} do
       redix_mock_command(:error, "GET", nil)
 
       product_not_found = %{product | id: "722a744bdf29eb0151000000"}
@@ -113,10 +113,10 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  describe "update" do
+  describe "update/2" do
     setup [:product_fixture]
 
-    test "renders product when data is valid", %{conn: conn, product: %Product{id: id} = product} do
+    test "Renders product when data is valid", %{conn: conn, product: %Product{id: id} = product} do
       cached_and_indexed_data_mock(product)
       redix_mock_command(:ok, "GET", product)
 
@@ -129,7 +129,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       assert Repo.get(Product, id) != nil
     end
 
-    test "renders errors when data is not found", %{conn: conn, product: product} do
+    test "Renders errors when data is not found", %{conn: conn, product: product} do
       redix_mock_command(:error, "GET", nil)
 
       product_not_found = %{product | id: "722a744bdf29eb0151000000"}
@@ -141,7 +141,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       assert response(conn, 404)
     end
 
-    test "renders errors when data is invalid", %{conn: conn, product: product} do
+    test "Renders errors when data is invalid", %{conn: conn, product: product} do
       redix_mock_command(:ok, "GET", product)
 
       response =
@@ -153,10 +153,10 @@ defmodule ProductsManagerWeb.ProductControllerTest do
     end
   end
 
-  describe "delete" do
+  describe "delete/2" do
     setup [:product_fixture]
 
-    test "deletes chosen product", %{conn: conn, product: product} do
+    test "Deletes chosen product", %{conn: conn, product: product} do
       redix_mock_command(:ok, "GET", product)
       redix_mock_command(:ok, "DEL", product)
       tirexs_mock_delete()
@@ -167,7 +167,7 @@ defmodule ProductsManagerWeb.ProductControllerTest do
       assert Repo.get(Product, product.id) == nil
     end
 
-    test "deletes chosen product not found", %{conn: conn, product: product} do
+    test "Deletes chosen product not found", %{conn: conn, product: product} do
       redix_mock_command(:error, "GET", nil)
 
       product_not_found = %{product | id: "722a744bdf29eb0151000000"}

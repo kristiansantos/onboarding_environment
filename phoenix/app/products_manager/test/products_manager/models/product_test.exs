@@ -4,7 +4,7 @@ defmodule ProductsManager.Models.ProductTest do
   alias ProductsManager.Models.Product
 
   describe "changeset/1" do
-    test "when all params are valid, returns a valid changeset" do
+    test "When all params are valid, returns a valid changeset" do
       valid_attrs = %{
         amount: 42,
         description: "some description",
@@ -19,7 +19,7 @@ defmodule ProductsManager.Models.ProductTest do
       assert changeset.valid? == true
     end
 
-    test "when there are invalid name param, returns an invalid changeset" do
+    test "When there are invalid name param, returns an invalid changeset" do
       invalid_attrs = %{
         amount: 42,
         description: "some description",
@@ -36,7 +36,7 @@ defmodule ProductsManager.Models.ProductTest do
       assert errors_on(changeset) == %{name: ["can't be blank"]}
     end
 
-    test "when there are invalid price param, returns an invalid changeset" do
+    test "When there are invalid price param, returns an invalid changeset" do
       invalid_attrs = %{
         amount: 42,
         description: "some description",
@@ -53,7 +53,7 @@ defmodule ProductsManager.Models.ProductTest do
       assert errors_on(changeset) == %{price: ["must be greater than 0"]}
     end
 
-    test "when there are invalid sku param, returns an invalid changeset" do
+    test "When there are invalid sku param, returns an invalid changeset" do
       invalid_attrs = %{
         amount: 42,
         description: "some description",
@@ -70,7 +70,7 @@ defmodule ProductsManager.Models.ProductTest do
       assert errors_on(changeset) == %{sku: ["has invalid format"]}
     end
 
-    test "when there are invalid barcode param, returns an invalid changeset" do
+    test "When there are invalid barcode param, returns an invalid changeset" do
       invalid_attrs = %{
         amount: 42,
         description: "some description",

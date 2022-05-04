@@ -34,7 +34,7 @@ defmodule ProductsManager.RedisTest do
       assert {:ok, @valid_attrs} == Redis.get_by(@source, @valid_attrs.id)
     end
 
-    test "with invalid id" do
+    test "With invalid id" do
       redix_mock_command(:error, "GET", nil)
 
       assert {:error, :not_found} == Redis.get_by(@source, "050505")

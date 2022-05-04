@@ -44,7 +44,7 @@ defmodule ProductsManager.TirexsHttpMock do
                  _index: "products_manager",
                  _score: 1.0,
                  _source: data,
-                 _type: "product"
+                 _type: ""
                }
              ]
            }

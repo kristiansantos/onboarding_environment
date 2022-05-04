@@ -26,11 +26,9 @@ defmodule ProductsManager.ElasticSearchTest do
 
       assert {:ok, [@valid_attrs]} == Elasticsearch.get_all(@source)
     end
-
   end
 
   describe "get_all/2" do
-
     test "With sucess and apply filters" do
       tirexs_mock_get(:ok, @valid_attrs)
 
@@ -41,13 +39,15 @@ defmodule ProductsManager.ElasticSearchTest do
 
   describe "create_or_update/2" do
     test "With sucess to check url" do
-      assert "/products_manager_test/data_source/#{@valid_attrs.id}" == "#{Application.get_env(:elasticsearch, :index)}/#{@source}/#{@valid_attrs.id}"
+      assert "/products_manager_test/data_source/#{@valid_attrs.id}" ==
+               "#{Application.get_env(:elasticsearch, :index)}/#{@source}/#{@valid_attrs.id}"
     end
   end
 
   describe "delete/2" do
     test "With sucess to check url" do
-      assert "/products_manager_test/data_source/#{@valid_attrs.id}" == "#{Application.get_env(:elasticsearch, :index)}/#{@source}/#{@valid_attrs.id}"
+      assert "/products_manager_test/data_source/#{@valid_attrs.id}" ==
+               "#{Application.get_env(:elasticsearch, :index)}/#{@source}/#{@valid_attrs.id}"
     end
   end
 
@@ -56,5 +56,4 @@ defmodule ProductsManager.ElasticSearchTest do
       assert "/products_manager_test" == "#{Application.get_env(:elasticsearch, :index)}"
     end
   end
-
 end

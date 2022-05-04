@@ -1,8 +1,6 @@
 defmodule ProductsManager.TirexsHttpMock do
   use ExUnit.CaseTemplate
 
-  @host_mock Application.get_env(:tirexs, :serviurice)
-
   using do
     quote do
       import Hammox

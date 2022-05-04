@@ -28,42 +28,44 @@ defmodule ProductsManager.RedisTest do
 
   setup :verify_on_exit!
 
-  describe "get_by" do
-    test "get_by/1 with valid id" do
+  describe "get_by/1" do
+    test "With valid id" do
       redix_mock_command(:ok, "GET", @valid_attrs)
       assert {:ok, @valid_attrs} == Redis.get_by(@source, @valid_attrs.id)
     end
 
-    test "get_by/1 with invalid id" do
+    test "with invalid id" do
       redix_mock_command(:error, "GET", nil)
 
       assert {:error, :not_found} == Redis.get_by(@source, "050505")
     end
   end
 
-  describe "set" do
-    test "set/1 with valid data" do
+  describe "set/1" do
+    test "With valid data" do
       redix_mock_command(:ok, "SET", @valid_attrs)
       assert :ok == Redis.set(@source, @valid_attrs)
     end
 
-    test "set/1 with invalid data" do
+    test "With invalid data" do
       assert_raise KeyError, fn -> Redis.set(@source, @invalid_attrs) end
     end
   end
 
-  describe "delete" do
-    test "delete/1 with valid id" do
+  describe "delete/1" do
+    test "With valid id" do
       redix_mock_command(:ok, "DEL", @valid_attrs.id)
       assert :ok == Redis.delete(@source, @valid_attrs.id)
     end
 
-    test "delete/1 with invalid id" do
+    test "With invalid id" do
       redix_mock_command(:ok, "DEL", "01020305")
       assert :ok == Redis.delete(@source, "01020305")
     end
+  end
 
-    test "delete_all/1" do
+  describe "delete_all/1" do
+    test "With sucess delete all document data" do
       redix_mock_command(:ok, "DEL", [])
       assert :ok == Redis.delete_all()
     end

@@ -9,6 +9,7 @@ defmodule ProductsManager.Contexts.Manager do
   alias ProductsManager.Services.Redis
 
   @source "product"
+  @filter_params [:sku, :name, :description, :amount, :price, :barcode]
 
   def list_products(params \\ %{}) when params == %{} do
     case Elasticsearch.get_all(@source) do
@@ -18,15 +19,15 @@ defmodule ProductsManager.Contexts.Manager do
   end
 
   def list_products(params) do
-    params_to_list = Map.to_list(params)
+    accept_params_list = params_permit(params)
 
-    case Elasticsearch.get_all(@source, params_to_list) do
+    case Elasticsearch.get_all(@source, accept_params_list) do
       {:ok, products} ->
         products
 
       _ ->
         Product
-        |> QueryBuilder.where(params_to_list)
+        |> QueryBuilder.where(accept_params_list)
         |> Repo.all()
     end
   end
@@ -74,6 +75,13 @@ defmodule ProductsManager.Contexts.Manager do
     Redis.set(@source, product)
 
     {:ok, product}
+  end
+
+  defp params_permit(params) do
+    params
+    |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+    |> Map.take(@filter_params)
+    |> Map.to_list()
   end
 
   defp get_product_attrs(product) do

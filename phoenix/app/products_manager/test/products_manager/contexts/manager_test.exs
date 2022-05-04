@@ -31,8 +31,8 @@ defmodule ProductsManager.Contexts.ManagerTest do
     created_at: nil,
     updated_at: nil
   }
-  @search_attrs %{sku: "ABC-DEFG-HJK", barcode: "A124BR66"}
-  @search_attrs_not_match %{sku: "ABC-DEFG-AAAA", barcode: "A124B7R66"}
+  @search_attrs %{"sku" => "ABC-DEFG-HJK", "barcode" => "A124BR66"}
+  @search_attrs_not_match %{"sku" => "ABC-DEFG-AAAA", "barcode" => "A124B7R66"}
 
   setup :verify_on_exit!
 

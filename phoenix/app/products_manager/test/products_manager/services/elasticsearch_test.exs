@@ -37,24 +37,4 @@ defmodule ProductsManager.ElasticSearchTest do
     end
   end
 
-  describe "create_or_update/2" do
-    test "With sucess to check url" do
-      assert "http://127.0.0.1:9200/products_manager_test/data_source/#{@valid_attrs.id}" ==
-               "#{Application.get_env(:tirexs, :uri)}#{Application.get_env(:elasticsearch, :index)}/#{@source}/#{@valid_attrs.id}"
-    end
-  end
-
-  describe "delete/2" do
-    test "With sucess to check url" do
-      assert "http://127.0.0.1:9200/products_manager_test/data_source/#{@valid_attrs.id}" ==
-               "#{Application.get_env(:tirexs, :uri)}#{Application.get_env(:elasticsearch, :index)}/#{@source}/#{@valid_attrs.id}"
-    end
-  end
-
-  describe "delete_all/0" do
-    test "With sucess to check url" do
-      assert "http://127.0.0.1:9200/products_manager_test" ==
-               "#{Application.get_env(:tirexs, :uri)}#{Application.get_env(:elasticsearch, :index)}"
-    end
-  end
 end

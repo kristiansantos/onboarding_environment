@@ -3,16 +3,15 @@ defmodule ProductsManager.Contexts.Manager do
 
   use QueryBuilder.Extension
 
-
   alias ProductsManager.Models.Product
   alias ProductsManager.Repo
-  alias ProductsManager.Services.Redis
   alias ProductsManager.Services.Elasticsearch
-
+  alias ProductsManager.Services.Redis
 
   @source "product"
+  @filter_params [:sku, :name, :description, :amount, :price, :barcode]
 
-  def list_products(params) when params == %{} do
+  def list_products(params \\ %{}) when params == %{} do
     case Elasticsearch.get_all(@source) do
       {:ok, products} -> products
       _ -> Repo.all(Product)
@@ -20,20 +19,21 @@ defmodule ProductsManager.Contexts.Manager do
   end
 
   def list_products(params) do
-    params_to_list = Map.to_list(params)
+    accept_params_list = params_permit(params)
 
-    case Elasticsearch.get_all(params_to_list, @source) do
-      {:ok, products} -> products
+    case Elasticsearch.get_all(@source, accept_params_list) do
+      {:ok, products} ->
+        products
 
       _ ->
         Product
-        |> QueryBuilder.where(params_to_list)
+        |> QueryBuilder.where(accept_params_list)
         |> Repo.all()
     end
   end
 
   def get_product(id) do
-    with {:ok, product} <- Redis.get_by(id, @source) do
+    with {:ok, product} <- Redis.get_by(@source, id) do
       {:ok, product}
     else
       _ ->
@@ -46,33 +46,55 @@ defmodule ProductsManager.Contexts.Manager do
 
   def create_product(attrs \\ %{}) do
     %Product{}
-    |> Product.changeset(attrs)
+    |> change_product(attrs)
     |> Repo.insert()
     |> cached_and_indexed_data()
   end
 
   def update_product(%Product{} = product, attrs) do
     product
-    |> Product.changeset(attrs)
+    |> change_product(attrs)
     |> Repo.update()
     |> cached_and_indexed_data()
   end
 
   def delete_product(%Product{} = product) do
-    Elasticsearch.delete(product.id, @source)
-    Redis.delete(product.id, @source)
+    Elasticsearch.delete(@source, product.id)
+    Redis.delete(@source, product.id)
     Repo.delete(product)
   end
 
-  def change_product(%Product{} = product, attrs \\ %{}) do
+  defp change_product(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
   end
 
-  defp cached_and_indexed_data({:error, _}), do: {:error, :bad_request}
+  defp cached_and_indexed_data({:error, _changeset} = error), do: error
 
   defp cached_and_indexed_data({:ok, product}) do
-    Elasticsearch.create_or_update(product, @source)
-    Redis.set(product, @source)
+    Elasticsearch.create_or_update(@source, get_product_attrs(product))
+    Redis.set(@source, product)
+
     {:ok, product}
+  end
+
+  defp params_permit(params) do
+    params
+    |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+    |> Map.take(@filter_params)
+    |> Map.to_list()
+  end
+
+  defp get_product_attrs(product) do
+    %{
+      amount: product.amount,
+      barcode: product.barcode,
+      description: product.description,
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      sku: product.sku,
+      created_at: DateTime.to_iso8601(product.created_at),
+      updated_at: DateTime.to_iso8601(product.updated_at)
+    }
   end
 end

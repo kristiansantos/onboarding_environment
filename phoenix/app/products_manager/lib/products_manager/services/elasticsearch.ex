@@ -1,43 +1,33 @@
 defmodule ProductsManager.Services.Elasticsearch do
-  import Tirexs.HTTP
+  @tirexs_http Application.get_env(:tirexs, :service)
+  def get_all(source),
+    do: handle_response(source, @tirexs_http.get("#{path()}/#{source}/_search"))
 
-  def get_all(source) do
-    with {:ok, 200, response_body} <- get("#{path()}#{source}/_search") do
-      {:ok, response_format(response_body[:hits][:hits], source)}
-    end
+  def get_all(source, search_list),
+    do:
+      handle_response(
+        source,
+        @tirexs_http.get("#{path()}/#{source}/_search?q=#{to_query(search_list)}")
+      )
+
+  def create_or_update(source, data),
+    do: @tirexs_http.put("#{path()}/#{source}/#{data.id}", data)
+
+  def delete(source, id), do: @tirexs_http.delete("#{path()}/#{source}/#{id}")
+  def delete_all(), do: @tirexs_http.delete("#{path()}")
+
+  defp to_query(search_list) do
+    search_list
+    |> Enum.map_join("&", fn {key, value} -> "#{key}:#{value}" end)
+    |> URI.encode()
   end
 
-  def get_all(array_conditions, source) do
-    with {:ok, 200, response_body} <-
-           get("#{path()}#{source}/_search?q=#{convert_query(array_conditions)}") do
-      {:ok, response_format(response_body[:hits][:hits], source)}
-    end
-  end
+  defp handle_response(source, :error), do: {:error, :internal_server_error}
 
-  def create_or_update(data, source) do
-    put("#{path()}#{source}/#{data.id}", convert_data(data))
-  end
+  defp handle_response(source, {:error, _http_code, _body} = error), do: error
 
-  def delete(id, source) do
-    delete("#{path()}#{source}/#{id}")
-  end
-
-  defp convert_data(data) do
-    data
-    |> Map.drop([:__meta__, :__struct__])
-    |> Map.put(:updated_at, DateTime.to_iso8601(DateTime.utc_now()))
-    |> Map.to_list()
-  end
-
-  defp convert_query(array_conditions) do
-    Enum.map_join(array_conditions, "&", fn {key, value} -> "#{key}:#{value}" end)
-  end
-
-  defp response_format(response, source) do
-    response
-    |> Enum.filter(fn key -> key[:_type] == source end)
-    |> Enum.map(fn key -> Map.delete(key[:_source], :updated_at) end)
-  end
+  defp handle_response(source, {:ok, _, response}),
+    do: {:ok, Enum.map(response[:hits][:hits], & &1[:_source])}
 
   defp path() do
     Application.get_env(:elasticsearch, :index)

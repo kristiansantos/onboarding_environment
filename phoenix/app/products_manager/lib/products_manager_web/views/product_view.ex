@@ -11,11 +11,14 @@ defmodule ProductsManagerWeb.ProductView do
   end
 
   def render("product.json", %{product: product}) do
-    %{id: product.id,
+    %{
+      id: product.id,
       sku: product.sku,
       name: product.name,
       description: product.description,
       amount: product.amount,
-      price: product.price}
+      price: product.price,
+      barcode: product.barcode
+    }
   end
 end

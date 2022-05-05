@@ -37,9 +37,11 @@ defmodule ProductsManager.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:query_builder, "~> 1.0.0"},
       {:mongodb_ecto, github: "michalmuskala/mongodb_ecto"},
-      {:exredis, ">= 0.2.4"},
+      {:redix, "~> 1.1"},
+      {:castore, ">= 0.0.0"},
       {:tirexs, "~> 0.8"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:hammox, "~> 0.5", only: :test},
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
@@ -58,9 +60,9 @@ defmodule ProductsManager.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.setup": ["ecto.create", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: ["ecto.create --quiet", "test"]
     ]
   end
 end

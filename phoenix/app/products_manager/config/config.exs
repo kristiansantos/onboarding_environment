@@ -18,13 +18,6 @@ config :products_manager, ProductsManagerWeb.Endpoint,
   pubsub_server: ProductsManager.PubSub,
   live_view: [signing_salt: "zGsYlhwB"]
 
-config :exredis,
-  host: "127.0.0.1",
-  port: 6379,
-  password: "",
-  db: 0,
-  reconnect: :no_reconnect,
-  max_queue: :infinity
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -33,6 +26,9 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+# Redis Host
+config :redix, host: "redis://localhost:6379"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

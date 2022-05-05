@@ -1,27 +1,43 @@
 defmodule ProductsManager.Services.Redis do
-  def get_by(id, source) do
-    case Exredis.Api.get("#{source}:#{id}") do
-      :undefined -> {:error, :not_found}
-      binary -> {:ok, decode(binary)}
+  @conn :redis_connection
+
+  @redix Application.get_env(:redix, :service)
+  def get_by(source, id) do
+    case @redix.command(@conn, ["GET", "#{source}:#{id}"]) do
+      {:error, error} -> {:error, error}
+      {:ok, nil} -> {:error, :not_found}
+      {:ok, data} -> {:ok, decode(data)}
     end
   end
 
-  def set(data, source) do
-    Exredis.Api.set("#{source}:#{data.id}", encode(data))
+  def set(source, data) do
+    case @redix.command(@conn, ["SET", "#{source}:#{data.id}", encode(data)]) do
+      {:error, error} -> {:error, error}
+      _ -> :ok
+    end
   end
 
-  def delete(id, source) do
-    Exredis.Api.del("#{source}:#{id}")
+  def delete(source, id) do
+    case @redix.command(@conn, ["DEL", "#{source}:#{id}"]) do
+      {:error, error} -> {:error, error}
+      _ -> :ok
+    end
   end
 
   def delete_all() do
-    Exredis.Api.flushall()
+    case @redix.command(@conn, ["FLUSHDB"]) do
+      {:error, error} -> {:error, error}
+      _ -> :ok
+    end
   end
 
   defp encode(data), do: data |> :erlang.term_to_binary() |> Base.encode16()
 
-  defp decode(data) do
-    {_, result} = Base.decode16(data)
-    :erlang.binary_to_term(result)
+  defp decode(data) when is_binary(data) do
+    with {_, result} <- Base.decode16(data) do
+      :erlang.binary_to_term(result)
+    end
   end
+
+  defp decode(data), do: data
 end

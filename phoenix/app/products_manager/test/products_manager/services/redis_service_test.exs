@@ -1,4 +1,4 @@
-defmodule ProductsManager.RedisTest do
+defmodule ProductsManager.RedisServiceTest do
   use ProductsManager.DataCase
   use ProductsManager.RedixMock
 

@@ -10,11 +10,9 @@ defmodule ProductsManager.Models.ExportJobTest do
   setup :verify_on_exit!
 
   describe "perfom/1" do
-    setup [:export_fixture]
-
-    test "When all params are valid, returns success", %{path: tmp_file_path} do
+    test "Return success" do
       tirexs_mock_get(:ok, [])
-      redix_mock_command(:ok, "GET", %{id: "job", path: tmp_file_path})
+      redix_mock_command(:ok, "SET", "tmp/path-file")
 
       filters = %{
         "filters" => %{"name" => "test_search", "price" => 50}
@@ -22,14 +20,16 @@ defmodule ProductsManager.Models.ExportJobTest do
 
       assert :ok == ExportJob.perform(filters)
     end
-  end
 
-  defp export_fixture(_) do
-    redix_mock_command(:ok, "SET", "export:job")
-    {:ok, tmp_file_path} =
-      Enum.map(1..10, fn number -> %{id: number, name: "test-#{number}"} end)
-      |> ExportService.to_csv()
+    test "Return error " do
+      tirexs_mock_get(:ok, [])
+      redix_mock_command(:error, "SET", nil)
 
-      %{path: tmp_file_path}
+      filters = %{
+        "filters" => %{"name" => "test_search", "price" => 50}
+      }
+
+      assert :error == ExportJob.perform(filters)
+    end
   end
 end

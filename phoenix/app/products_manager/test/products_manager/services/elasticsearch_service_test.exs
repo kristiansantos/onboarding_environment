@@ -1,4 +1,4 @@
-defmodule ProductsManager.ElasticSearchTest do
+defmodule ProductsManager.ElasticSearchServiceTest do
   use ProductsManager.DataCase
   use ProductsManager.TirexsHttpMock
 

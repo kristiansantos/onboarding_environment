@@ -1,7 +1,8 @@
-defmodule ProductsManager.Services.Redis do
+defmodule ProductsManager.Services.RedisService do
   @conn :redis_connection
 
   @redix Application.get_env(:redix, :service)
+
   def get_by(source, id) do
     case @redix.command(@conn, ["GET", "#{source}:#{id}"]) do
       {:error, error} -> {:error, error}

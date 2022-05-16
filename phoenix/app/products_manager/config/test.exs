@@ -17,3 +17,6 @@ config :elasticsearch, :index, "/products_manager_test"
 # Hammox mocks
 config :tirexs, service: TirexsHttpBehaviourMock
 config :redix, service: RedixBehaviourMock
+config :task_bunny, service: TaskBunnyBehaviourMock
+
+config :task_bunny, disable_auto_start: true

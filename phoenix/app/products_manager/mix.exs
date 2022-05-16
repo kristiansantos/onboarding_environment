@@ -20,7 +20,7 @@ defmodule ProductsManager.MixProject do
   def application do
     [
       mod: {ProductsManager.Application, []},
-      extra_applications: [:logger, :runtime_tools, :mongodb_ecto, :tirexs]
+      extra_applications: [:logger, :runtime_tools, :mongodb_ecto, :tirexs, :task_bunny]
     ]
   end
 
@@ -42,6 +42,8 @@ defmodule ProductsManager.MixProject do
       {:tirexs, "~> 0.8"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:hammox, "~> 0.5", only: :test},
+      {:csv, "~> 2.4.1"},
+      {:task_bunny, "~> 0.3.4"},
       {:phoenix_live_dashboard, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},

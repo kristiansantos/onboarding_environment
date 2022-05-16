@@ -9,7 +9,7 @@ config :logger, level: :info
 import_config "prod.secret.exs"
 
 # Services
-config :elasticsearch, service: ProductsManager.Services.Elasticsearch
+config :elasticsearch, service: ProductsManager.Services.ElasticsearchService
 config :elasticsearch, :index, "/products_manager"
 
-config :redis, service: ProductsManager.Services.Redis
+config :redis, service: ProductsManager.Services.RedisService

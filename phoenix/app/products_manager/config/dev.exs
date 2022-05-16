@@ -36,3 +36,5 @@ config :tirexs, :uri, "http://127.0.0.1:9200"
 config :redix, service: Redix
 
 config :elasticsearch, :index, "/products_manager"
+
+config :task_bunny, service: TaskBunny.Job

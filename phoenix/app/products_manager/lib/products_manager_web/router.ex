@@ -9,6 +9,7 @@ defmodule ProductsManagerWeb.Router do
     pipe_through :api
 
     resources "/products", ProductController, except: [:new, :edit]
+    resources "/export", ExportController, except: [:new, :edit, :update, :delete, :show]
   end
 
   if Mix.env() in [:dev, :test] do

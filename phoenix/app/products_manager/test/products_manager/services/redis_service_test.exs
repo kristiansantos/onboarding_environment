@@ -28,7 +28,7 @@ defmodule ProductsManager.RedisServiceTest do
 
   setup :verify_on_exit!
 
-  describe "get_by/1" do
+  describe "get_by/2" do
     test "With valid id" do
       redix_mock_command(:ok, "GET", @valid_attrs)
       assert {:ok, @valid_attrs} == RedisService.get_by(@source, @valid_attrs.id)
@@ -41,7 +41,7 @@ defmodule ProductsManager.RedisServiceTest do
     end
   end
 
-  describe "set/1" do
+  describe "set/2" do
     test "With valid data" do
       redix_mock_command(:ok, "SET", @valid_attrs)
       assert :ok == RedisService.set(@source, @valid_attrs)
@@ -52,7 +52,18 @@ defmodule ProductsManager.RedisServiceTest do
     end
   end
 
-  describe "delete/1" do
+  describe "set_expire/3" do
+    test "With valid data" do
+      redix_mock_command(:ok, "SET", @valid_attrs)
+      assert :ok == RedisService.set_expire(@source, @valid_attrs, 60)
+    end
+
+    test "With invalid data" do
+      assert_raise KeyError, fn -> RedisService.set_expire(@source, @invalid_attrs, 60) end
+    end
+  end
+
+  describe "delete/2" do
     test "With valid id" do
       redix_mock_command(:ok, "DEL", @valid_attrs.id)
       assert :ok == RedisService.delete(@source, @valid_attrs.id)

@@ -20,5 +20,5 @@ defmodule ProductsManager.Services.ExportService do
   defp path(),
     do: System.tmp_dir!() |> Path.join("export-#{DateTime.to_iso8601(DateTime.utc_now())}.csv")
 
-  defp cache_export(file_path), do: RedisService.set("export", %{id: "job", path: file_path})
+  defp cache_export(file_path), do: RedisService.set_expire("export", %{id: "job", path: file_path}, 21600)
 end

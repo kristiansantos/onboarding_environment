@@ -20,6 +20,14 @@ defmodule ProductsManager.Services.RedisService do
     end
   end
 
+  def set_expire(source, data, expire_seconds) do
+    case @redix.command(@conn, ["SET", "#{source}:#{data.id}", encode(data), "EX", expire_seconds]) do
+      {:error, error} -> {:error, error}
+      :error -> :error
+      _ -> :ok
+    end
+  end
+
   def delete(source, id) do
     case @redix.command(@conn, ["DEL", "#{source}:#{id}"]) do
       {:error, error} -> {:error, error}

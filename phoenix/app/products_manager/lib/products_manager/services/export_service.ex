@@ -13,7 +13,7 @@ defmodule ProductsManager.Services.ExportService do
 
     case cache_export(tmp_file_path) do
       :ok -> {:ok, tmp_file_path}
-      {:error, error} -> {:error, error}
+      _ -> :error
     end
   end
 

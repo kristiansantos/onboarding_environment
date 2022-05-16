@@ -6,6 +6,7 @@ defmodule ProductsManager.Services.RedisService do
   def get_by(source, id) do
     case @redix.command(@conn, ["GET", "#{source}:#{id}"]) do
       {:error, error} -> {:error, error}
+      :error -> :error
       {:ok, nil} -> {:error, :not_found}
       {:ok, data} -> {:ok, decode(data)}
     end
@@ -14,6 +15,7 @@ defmodule ProductsManager.Services.RedisService do
   def set(source, data) do
     case @redix.command(@conn, ["SET", "#{source}:#{data.id}", encode(data)]) do
       {:error, error} -> {:error, error}
+      :error -> :error
       _ -> :ok
     end
   end
@@ -21,6 +23,7 @@ defmodule ProductsManager.Services.RedisService do
   def delete(source, id) do
     case @redix.command(@conn, ["DEL", "#{source}:#{id}"]) do
       {:error, error} -> {:error, error}
+      :error -> :error
       _ -> :ok
     end
   end
@@ -28,6 +31,7 @@ defmodule ProductsManager.Services.RedisService do
   def delete_all() do
     case @redix.command(@conn, ["FLUSHDB"]) do
       {:error, error} -> {:error, error}
+      :error -> :error
       _ -> :ok
     end
   end

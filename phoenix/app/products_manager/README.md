@@ -141,19 +141,19 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
         content-disposition: attachment; filename="export-2022-05-13.csv"
       ```
 
-    * Create new export (Create) [POST/api/exports]
-    * Status code: 202
-    * Request body (optional):
-      ```
-        {
-          "filters": {
-            "name": "name_filter",
-            "price": 50
-          }
+* Create new export (Create) [POST/api/exports]
+  * Status code: 202
+  * Request body (optional):
+    ```
+      {
+        "filters": {
+          "name": "name_filter",
+          "price": 50
         }
-      ```
-      
-    * Response body:
-      ```
-        "Export is being processed with success"
+      }
+    ```
+    
+  * Response body:
+    ```
+      "Export is being processed with success"
       ```

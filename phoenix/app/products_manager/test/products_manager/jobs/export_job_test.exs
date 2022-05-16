@@ -2,10 +2,8 @@ defmodule ProductsManager.Models.ExportJobTest do
   use ProductsManager.DataCase
   use ProductsManager.TirexsHttpMock
   use ProductsManager.RedixMock
-  use ProductsManager.TaskBunnyMock
 
   alias ProductsManager.Jobs.ExportJob
-  alias ProductsManager.Services.ExportService
 
   setup :verify_on_exit!
 

@@ -1,4 +1,4 @@
-defmodule ProductsManager.Services.Behaviours.TaskBunnyBehaviour do
+defmodule ProductsManager.Behaviours.Libs.TaskBunnyBehaviour do
   @type method_result :: :ok | {:ok, any}
   @type handle_error :: :error | {:error, any}
 

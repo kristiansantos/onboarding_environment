@@ -22,6 +22,17 @@ defmodule ProductsManagerWeb.ExportControllerTest do
 
       assert response(conn, 200)
     end
+
+    test "Render error with not found export", %{conn: conn} do
+      redix_mock_command(:ok, "GET", nil)
+
+      conn =
+        conn
+        |> get(Routes.export_path(conn, :index))
+        |> json_response(404)
+
+      assert conn["errors"] == %{"detail" => "Not Found"}
+    end
   end
 
   describe "create/2" do
@@ -66,10 +77,11 @@ defmodule ProductsManagerWeb.ExportControllerTest do
 
   defp export_fixture(_) do
     redix_mock_command(:ok, "SET", "export:job")
+
     {:ok, tmp_file_path} =
       Enum.map(1..10, fn number -> %{id: number, name: "test-#{number}"} end)
       |> ExportService.to_csv()
 
-      %{path: tmp_file_path}
+    %{path: tmp_file_path}
   end
 end

@@ -1,5 +1,5 @@
 defmodule ProductsManager.Services.ElasticsearchService do
-  @tirexs_http Application.get_env(:tirexs, :export)
+  @tirexs_http Application.get_env(:tirexs, :lib)
   def get_all(source),
     do: handle_response(source, @tirexs_http.get("#{path()}/#{source}/_search"))
 

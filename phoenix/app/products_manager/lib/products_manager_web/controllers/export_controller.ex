@@ -8,7 +8,7 @@ defmodule ProductsManagerWeb.ExportController do
 
   plug :optional_params when action in [:create]
 
-  @task_bunny Application.get_env(:task_bunny, :export)
+  @task_bunny Application.get_env(:task_bunny, :lib)
 
   def index(conn, _) do
     with {:ok, tmp_file} <- RedisService.get_by("export", "job") do

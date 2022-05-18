@@ -30,11 +30,11 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :tirexs, export: Tirexs.HTTP
+config :tirexs, lib: Tirexs.HTTP
 config :tirexs, :uri, "http://127.0.0.1:9200"
 
-config :redix, export: Redix
+config :redix, lib: Redix
 
 config :elasticsearch, :index, "/products_manager"
 
-config :task_bunny, export: TaskBunny.Job
+config :task_bunny, lib: TaskBunny.Job

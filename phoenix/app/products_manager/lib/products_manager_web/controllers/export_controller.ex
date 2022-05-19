@@ -15,6 +15,7 @@ defmodule ProductsManagerWeb.ExportController do
       send_download(conn, {:file, tmp_file[:path]})
     end
   end
+
   def create(conn, params) do
     case @task_bunny.enqueue(ExportJob, params) do
       :ok -> send_resp(conn, 202, "Export is being processed with success")

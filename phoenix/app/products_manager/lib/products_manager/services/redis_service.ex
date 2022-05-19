@@ -5,42 +5,37 @@ defmodule ProductsManager.Services.RedisService do
 
   def get_by(source, id) do
     case @redix.command(@conn, ["GET", "#{source}:#{id}"]) do
-      {:error, error} -> {:error, error}
-      :error -> :error
       {:ok, nil} -> {:error, :not_found}
-      {:ok, data} -> {:ok, decode(data)}
+      {:ok, response} -> {:ok, decode(response)}
+      {:error, _reason} -> :error
     end
   end
 
   def set(source, data) do
     case @redix.command(@conn, ["SET", "#{source}:#{data.id}", encode(data)]) do
-      {:error, error} -> {:error, error}
-      :error -> :error
-      _ -> :ok
+      {:ok, _response} -> :ok
+      {:error, _reason} -> :error
     end
   end
 
   def set_expire(source, data, expire_seconds) do
     case @redix.command(@conn, ["SET", "#{source}:#{data.id}", encode(data), "EX", expire_seconds]) do
-      {:error, error} -> {:error, error}
-      :error -> :error
-      _ -> :ok
+      {:ok, _response} -> :ok
+      {:error, _reason} -> :error
     end
   end
 
   def delete(source, id) do
     case @redix.command(@conn, ["DEL", "#{source}:#{id}"]) do
-      {:error, error} -> {:error, error}
-      :error -> :error
-      _ -> :ok
+      {:ok, _response} -> :ok
+      {:error, _reason} -> :error
     end
   end
 
   def delete_all() do
     case @redix.command(@conn, ["FLUSHDB"]) do
-      {:error, error} -> {:error, error}
-      :error -> :error
-      _ -> :ok
+      {:ok, _response} -> :ok
+      {:error, _reason} -> :error
     end
   end
 

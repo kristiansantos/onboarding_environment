@@ -9,9 +9,6 @@ defmodule ProductsManager.Jobs.ExportJob do
   def perform(%{"filters" => filters}) do
     products = Manager.list_products(filters)
 
-    case ExportService.to_csv(products) do
-      {:ok, _} -> :ok
-      _ -> :error
-    end
+    ExportService.to_csv(products)
   end
 end

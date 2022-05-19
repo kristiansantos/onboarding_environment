@@ -44,14 +44,6 @@ defmodule ProductsManagerWeb.ExportControllerTest do
       assert "Export is being processed with success" == conn.resp_body
     end
 
-    test "Renders error with empty filters", %{conn: conn} do
-      task_bunny_mock_enqueue(:error, [])
-
-      conn = post(conn, Routes.export_path(conn, :create))
-
-      assert "Error in export request" == conn.resp_body
-    end
-
     test "Renders success with filters", %{conn: conn} do
       task_bunny_mock_enqueue(:ok, [])
 
@@ -63,7 +55,7 @@ defmodule ProductsManagerWeb.ExportControllerTest do
       assert "Export is being processed with success" == conn.resp_body
     end
 
-    test "Renders error with filters", %{conn: conn} do
+    test "Returns error when TaskBunny fails", %{conn: conn} do
       task_bunny_mock_enqueue(:error, [])
 
       conn =

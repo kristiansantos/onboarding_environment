@@ -7,27 +7,25 @@ defmodule ProductsManager.Models.ExportJobTest do
 
   setup :verify_on_exit!
 
+  setup_all do
+    %{
+      "filters" => %{"name" => "test_search", "price" => 50}
+    }
+  end
+
   describe "perfom/1" do
-    test "Return success" do
+    test "Return success", filter_params do
       tirexs_mock_get(:ok, [])
       redix_mock_command(:ok, "SET", "tmp/path-file")
 
-      filters = %{
-        "filters" => %{"name" => "test_search", "price" => 50}
-      }
-
-      assert :ok == ExportJob.perform(filters)
+      assert {:ok, _} = ExportJob.perform(filter_params)
     end
 
-    test "Return error " do
+    test "Returns error when Redis fails", filter_params do
       tirexs_mock_get(:ok, [])
       redix_mock_command(:error, "SET", nil)
 
-      filters = %{
-        "filters" => %{"name" => "test_search", "price" => 50}
-      }
-
-      assert :error == ExportJob.perform(filters)
+      assert :error == ExportJob.perform(filter_params)
     end
   end
 end

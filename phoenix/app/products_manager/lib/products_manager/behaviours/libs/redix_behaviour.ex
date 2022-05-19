@@ -1,7 +1,7 @@
 defmodule ProductsManager.Behaviours.Libs.RedixBehaviour do
   @type redis_command() :: [String.Chars.t()]
   @type connection() :: GenServer.server()
-  @type handle_error :: :error | {:error, atom() | Redix.Error.t() | Redix.ConnectionError.t()}
+  @type handle_error :: :error | {:error, any()}
 
   @callback command(connection(), redis_command()) ::
               {:ok, any}

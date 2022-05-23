@@ -1,4 +1,4 @@
-defmodule ProductsManager.Services.Behaviours.TirexsHttpBehaviour do
+defmodule ProductsManager.Behaviours.Libs.TirexsHttpBehaviour do
   @type method_result :: {:ok, number, any}
   @type handle_error :: :error | {:error, number, any}
 

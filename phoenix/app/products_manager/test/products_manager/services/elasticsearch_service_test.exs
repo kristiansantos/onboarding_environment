@@ -1,8 +1,8 @@
-defmodule ProductsManager.ElasticSearchTest do
+defmodule ProductsManager.ElasticSearchServiceTest do
   use ProductsManager.DataCase
   use ProductsManager.TirexsHttpMock
 
-  alias ProductsManager.Services.Elasticsearch
+  alias ProductsManager.Services.ElasticsearchService
 
   @valid_attrs %{
     id: Enum.random(0..255),
@@ -24,7 +24,7 @@ defmodule ProductsManager.ElasticSearchTest do
     test "With sucess" do
       tirexs_mock_get(:ok, @valid_attrs)
 
-      assert {:ok, [@valid_attrs]} == Elasticsearch.get_all(@source)
+      assert {:ok, [@valid_attrs]} == ElasticsearchService.get_all(@source)
     end
   end
 
@@ -33,7 +33,7 @@ defmodule ProductsManager.ElasticSearchTest do
       tirexs_mock_get(:ok, @valid_attrs)
 
       assert {:ok, [@valid_attrs]} ==
-               Elasticsearch.get_all(@source, name: "name_test", barcode: "UP77BR56")
+        ElasticsearchService.get_all(@source, name: "name_test", barcode: "UP77BR56")
     end
   end
 

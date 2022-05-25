@@ -9,9 +9,7 @@
   $ docker ps # List containers.
   $ docker exec -it my_container_id bash # Acess bash container.
   $ mix deps.get # Install dependencies with 
-  $ mix ecto.setup # Create and migrate your database with
-  $ mix phx.server # Create and migrate your database with
-
+  $ mix phx.server # Start server
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ```
 

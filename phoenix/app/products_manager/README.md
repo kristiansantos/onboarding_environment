@@ -14,8 +14,11 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ```
 
 ## Challengers:
-  - First challenge: create application in rails 4.x with mongodb 4.0 in mode API and create service for products 
-  - Second challenge: create application in phoenix 1.5.13 with mongodb 4.0 in mode API and create service for products and query string filter in index
+  - First challenge: create application in rails 4.x with mongodb 4.0 in mode API and create service for products.
+  - Second challenge: create application in phoenix 1.5.13 with mongodb 4.0 in mode API and create service for products and query string filter in index.
+  - Third challenge: integrate services with redis and elasticsearch.
+  - Fourth challenge: (TDD, CD, DoD) test coverage.
+  - Fifth challenge: export service.
 
 ## Services
 
@@ -126,3 +129,29 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
       ```
 * Delete product (Delete) [DELETE/api/products/:id]
   * Status code: 204
+
+### Exports
+* Download export (index) [GET/api/exports]
+  * Status code: 200
+  * Response headers:
+      ```
+        content-type : text/csv
+        content-disposition: attachment; filename="export-2022-05-13.csv"
+      ```
+
+* Create new export (Create) [POST/api/exports]
+  * Status code: 202
+  * Request body (optional):
+    ```
+      {
+        "filters": {
+          "name": "name_filter",
+          "price": 50
+        }
+      }
+    ```
+    
+  * Response body:
+    ```
+      "Export is being processed with success"
+      ```

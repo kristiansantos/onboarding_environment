@@ -33,3 +33,14 @@ config :redix, host: "redis://localhost:6379"
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+config :task_bunny,
+  hosts: [
+    default: [connect_options: "amqp://localhost?heartbeat=30"]
+  ]
+
+config :task_bunny,
+  queue: [
+    namespace: "task_bunny_",
+    queues: [[name: "exports", jobs: :default]]
+  ]

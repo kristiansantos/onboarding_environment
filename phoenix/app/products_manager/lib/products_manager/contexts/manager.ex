@@ -5,14 +5,14 @@ defmodule ProductsManager.Contexts.Manager do
 
   alias ProductsManager.Models.Product
   alias ProductsManager.Repo
-  alias ProductsManager.Services.Elasticsearch
-  alias ProductsManager.Services.Redis
+  alias ProductsManager.Services.ElasticsearchService
+  alias ProductsManager.Services.RedisService
 
   @source "product"
   @filter_params [:sku, :name, :description, :amount, :price, :barcode]
 
   def list_products(params \\ %{}) when params == %{} do
-    case Elasticsearch.get_all(@source) do
+    case ElasticsearchService.get_all(@source) do
       {:ok, products} -> products
       _ -> Repo.all(Product)
     end
@@ -21,7 +21,7 @@ defmodule ProductsManager.Contexts.Manager do
   def list_products(params) do
     accept_params_list = params_permit(params)
 
-    case Elasticsearch.get_all(@source, accept_params_list) do
+    case ElasticsearchService.get_all(@source, accept_params_list) do
       {:ok, products} ->
         products
 
@@ -33,7 +33,7 @@ defmodule ProductsManager.Contexts.Manager do
   end
 
   def get_product(id) do
-    with {:ok, product} <- Redis.get_by(@source, id) do
+    with {:ok, product} <- RedisService.get_by(@source, id) do
       {:ok, product}
     else
       _ ->
@@ -59,8 +59,8 @@ defmodule ProductsManager.Contexts.Manager do
   end
 
   def delete_product(%Product{} = product) do
-    Elasticsearch.delete(@source, product.id)
-    Redis.delete(@source, product.id)
+    ElasticsearchService.delete(@source, product.id)
+    RedisService.delete(@source, product.id)
     Repo.delete(product)
   end
 
@@ -71,8 +71,8 @@ defmodule ProductsManager.Contexts.Manager do
   defp cached_and_indexed_data({:error, _changeset} = error), do: error
 
   defp cached_and_indexed_data({:ok, product}) do
-    Elasticsearch.create_or_update(@source, get_product_attrs(product))
-    Redis.set(@source, product)
+    ElasticsearchService.create_or_update(@source, get_product_attrs(product))
+    RedisService.set(@source, product)
 
     {:ok, product}
   end
